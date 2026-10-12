@@ -1,5 +1,16 @@
 # PowerTokens Usage Dashboard
 
+<p align="center">
+  <a href="./README.md">English</a> | <a href="./README.zh.md">简体中文</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT">
+  <img src="https://img.shields.io/badge/python-3.8%2B-blue" alt="Python 3.8+">
+  <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
+  <img src="https://img.shields.io/badge/language-English%20%7C%20%E4%B8%AD%E6%96%87-orange" alt="EN / 中文">
+</p>
+
 Generate a **single-file offline HTML dashboard** of your (or your team's) model spend on [PowerTokens](https://www.powertokens.ai) — KPIs, cost trends by model / day / modality, and call details — **zero external dependencies, email-friendly, presentation-ready**.
 
 Data comes from PT's **private console API** (per-call exact amount / quota / token), not estimates. As long as you can log into PT in a browser and copy one Cookie, you can pull your entire account history.
@@ -21,17 +32,9 @@ Both share the same `scripts/*.py` with identical logic. Section ① is the prim
 
 ## Screenshots
 
-Same dashboard, one-click language switch at top-right (real data shown):
-
-**English (default)**
+Real data shown (English UI, the default). Switch the dashboard language anytime at the top-right of the page:
 
 ![PowerTokens Usage Dashboard — English](docs/screenshot-en.png)
-
-**中文 (Chinese)**
-
-![PowerTokens 用量看板 — 中文](docs/screenshot-zh.png)
-
-📘 中文文档请见 [README.zh.md](./README.zh.md).
 
 ---
 

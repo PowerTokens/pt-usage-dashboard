@@ -1,5 +1,16 @@
 # PowerTokens 用量看板（pt-usage-dashboard）
 
+<p align="center">
+  <a href="./README.md">English</a> | <a href="./README.zh.md">简体中文</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT">
+  <img src="https://img.shields.io/badge/python-3.8%2B-blue" alt="Python 3.8+">
+  <img src="https://img.shields.io/badge/dependencies-zero-brightgreen" alt="Zero dependencies">
+  <img src="https://img.shields.io/badge/language-English%20%7C%20%E4%B8%AD%E6%96%87-orange" alt="EN / 中文">
+</p>
+
 把你（或你的团队）在 [PowerTokens](https://www.powertokens.ai) 上调过的模型消耗，生成一张**单文件离线 HTML 看板**——KPI、按模型/按天/按模态成本趋势、调用明细全都有，**零外部依赖、可邮件转发、可进汇报**。
 
 数据来源是 PT **网页控制台的私有接口**（逐笔精确 amount / quota / token），不靠估算。只要你能登录 PT 网页、复制一个 Cookie，就能拉到你账号的全部历史消耗。
@@ -21,17 +32,9 @@
 
 ## 截图预览
 
-同一份数据、同一个看板，右上角一键切换中英文（示例为真实数据渲染）：
-
-**英文（默认）**
-
-![PowerTokens Usage Dashboard — English](docs/screenshot-en.png)
-
-**中文**
+示例为真实数据渲染（中文界面）。看板右上角可随时切换中英文：
 
 ![PowerTokens 用量看板 — 中文](docs/screenshot-zh.png)
-
-📗 英文文档请见 [README.md](./README.md)。
 
 ---
 
