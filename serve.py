@@ -98,23 +98,35 @@ def cache_status():
 
 # ---------------------------------------------------------------- 拉数据
 
-def friendly_error(code, msg):
+def friendly_error(code, msg, lang="en"):
+    """把 PT 的报错翻译成人话（中英文）。"""
     m = str(msg or "")
+    zh = (lang == "zh")
     if code == 401 or "authorization" in m.lower() or "登录" in m:
         return ("登录已过期（PT 的会话 token 大约 3 天失效）。"
-                "请重新打开 PT 网页登录，复制 Cookie `_Bearer` 的值，粘贴到下面重新拉取。")
+                "请重新打开 PT 网页登录，复制 Cookie `_Bearer` 的值，粘贴到下面重新拉取。"
+                if zh else
+                "Login expired (PT session tokens last about 3 days). "
+                "Open the PT site and log in again, copy the `_Bearer` cookie value, "
+                "paste it above, then fetch again.")
     if code == -1 or "urlopen" in m or "timed out" in m or "Network" in m:
-        return "连不上 PowerTokens（网络/代理问题）。检查网络后重试。"
+        return ("连不上 PowerTokens（网络/代理问题）。检查网络后重试。" if zh else
+                "Cannot reach PowerTokens (network / proxy issue). Check your connection and retry.")
     if code == 429:
-        return "请求太频繁，PT 限流了。等一会儿再试。"
-    return "拉取失败（code=%s）：%s" % (code, m[:200])
+        return ("请求太频繁，PT 限流了。等一会儿再试。" if zh else
+                "Too many requests — PT is rate-limiting you. Wait a bit and retry.")
+    tail = ("拉取失败（code=%s）：%s" if zh else "Fetch failed (code=%s): %s")
+    return tail % (code, m[:200])
 
 
-def do_fetch(since=DEFAULT_SINCE):
+def do_fetch(since=DEFAULT_SINCE, lang="en"):
     """拉取全部账户并写缓存。返回 {ok, records, total, error, hint}。"""
+    zh = (lang == "zh")
     accounts = fps.load_accounts(SKILL_DIR, None)
     if not accounts:
-        return {"ok": False, "error": "还没有 token，请先粘贴。", "hint": ""}
+        return {"ok": False,
+                "error": "还没有 token，请先粘贴。" if zh else "No token yet — paste one first.",
+                "hint": ""}
 
     now = int(time.time())
     since_ts = int(datetime.datetime.strptime(since, "%Y-%m-%d")
@@ -128,11 +140,13 @@ def do_fetch(since=DEFAULT_SINCE):
         bal = api.post("/bill/balance", {})
         bcode = bal.get("code")
         if bcode == 401:
-            return {"ok": False, "error": "token 无效或已过期",
-                    "hint": friendly_error(401, bal.get("msg"))}
+            return {"ok": False,
+                    "error": "token 无效或已过期" if zh else "Invalid or expired token",
+                    "hint": friendly_error(401, bal.get("msg"), lang)}
         if bcode == -1:
-            return {"ok": False, "error": "连不上 PowerTokens",
-                    "hint": friendly_error(-1, bal.get("msg"))}
+            return {"ok": False,
+                    "error": "连不上 PowerTokens" if zh else "Cannot reach PowerTokens",
+                    "hint": friendly_error(-1, bal.get("msg"), lang)}
         recs = fps.fetch_all_records(api, since_ts, now)
 
         safe = "".join(ch if ch.isalnum() or ch in "-_" else "_" for ch in acc_name)
@@ -164,7 +178,10 @@ def do_fetch(since=DEFAULT_SINCE):
 
     if total_recs == 0:
         return {"ok": True, "records": 0, "total": 0.0,
-                "warn": "拉到了 0 条记录。可能这个时间段确实没有调用，也可能 token 已失效（换个时间段试试或重新粘贴 token）。"}
+                "warn": ("拉到了 0 条记录。可能这个时间段确实没有调用，"
+                         "也可能 token 已失效（换个时间段试试或重新粘贴 token）。" if zh else
+                         "Fetched 0 records. Either there really were no calls in this range, "
+                         "or the token is dead (try another date range or paste a fresh token).")}
     return {"ok": True, "records": total_recs, "total": round(total_amt, 4)}
 
 
@@ -276,19 +293,24 @@ def build_demo(lang="en", theme="light"):
 
 # ---------------------------------------------------------------- 网页界面
 
-PAGE = """<!DOCTYPE html>
-<html lang="zh-CN">
+PAGE = """
+<!DOCTYPE html>
+<html lang="__HTML_LANG__">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PowerTokens 用量看板 · 控制台</title>
+<title>__TITLE__</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
  background:#f4f6fb;color:#1f2937;padding:clamp(16px,4vw,40px);line-height:1.6}
 .wrap{max-width:760px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:6px}
 h1{font-size:22px;margin:0 0 6px}
 .sub{color:#7b8494;font-size:13px;margin-bottom:22px}
+.langbtn{background:#fff;color:#374151;border:1px solid #e8ecf3;border-radius:9px;padding:6px 14px;
+ font-size:13px;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}
+.langbtn:hover{border-color:#4f7cff;color:#4f7cff}
 .card{background:#fff;border:1px solid #e8ecf3;border-radius:16px;padding:20px;margin-bottom:16px;
  box-shadow:0 1px 3px rgba(16,24,40,.06),0 8px 22px -10px rgba(16,24,40,.12)}
 .card h2{font-size:15px;margin:0 0 12px;font-weight:600}
@@ -321,96 +343,205 @@ code{background:#f1f5f9;padding:1px 6px;border-radius:5px;font-size:12px}
 </head>
 <body>
 <div class="wrap">
-  <h1>PowerTokens 用量看板</h1>
-  <div class="sub">在本机浏览器里粘贴 token，剩下的交给它。数据只在你这台电脑上跑。</div>
+  <header>
+    <h1 data-i18n="title">PowerTokens Usage Dashboard</h1>
+    <button class="langbtn" id="langBtn" onclick="toggleLang()">中文</button>
+  </header>
+  <div class="sub" data-i18n="subtitle">Paste your token here and let it do the rest. Everything runs on this machine only.</div>
 
   <div class="card">
-    <h2>1 · 会话 token</h2>
+    <h2 data-i18n="step_token">1 · Session token</h2>
     <div id="tokenState"></div>
-    <label for="tok">粘贴浏览器里 Cookie <code>_Bearer</code> 的值（一整串 JWT）</label>
-    <textarea id="tok" placeholder="eyJhbGciOi...（整串粘贴进来）"></textarea>
+    <label for="tok" data-i18n-html="token_label">Paste the value of the <code>_Bearer</code> cookie (the whole JWT)</label>
+    <textarea id="tok" data-i18n-ph="token_ph" placeholder="eyJhbGciOi... (paste the whole string)"></textarea>
     <div class="row">
-      <button onclick="saveToken()">保存 token</button>
-      <button class="sec" onclick="fetchData()">拉取数据</button>
+      <button onclick="saveToken()" data-i18n="btn_save">Save token</button>
+      <button class="sec" onclick="fetchData()" data-i18n="btn_fetch">Fetch data</button>
     </div>
     <div id="msg" class="msg"></div>
     <details style="margin-top:14px">
-      <summary style="cursor:pointer;font-size:13px;color:#4f7cff">这串 token 去哪儿找？</summary>
+      <summary style="cursor:pointer;font-size:13px;color:#4f7cff" data-i18n="where_title">Where do I find this token?</summary>
       <ol class="steps">
-        <li>浏览器打开 <b>powertokens.ai</b> 并登录，进「用量 / 消耗」页</li>
-        <li>按 <code>F12</code> → <b>Application（应用）</b> → <b>Cookies</b> → 站点 <code>https://www.powertokens.ai</code></li>
-        <li>找到名为 <code>_Bearer</code> 的那条，复制它的 <b>Value</b></li>
-        <li>粘回上面的框里，点「保存 token」</li>
+        <li data-i18n-html="s1">Open <b>powertokens.ai</b> in a browser and log in, then go to the Usage page</li>
+        <li data-i18n-html="s2">Press <code>F12</code> → <b>Application</b> → <b>Cookies</b> → site <code>https://www.powertokens.ai</code></li>
+        <li data-i18n-html="s3">Find the one named <code>_Bearer</code> and copy its <b>Value</b></li>
+        <li data-i18n-html="s4">Paste it above and click <b>Save token</b></li>
       </ol>
-      <div class="note">它随登录会话失效，实测约 3 天。过期后页面会明说，重新粘一次就行 —— 这是 PT 网页的鉴权机制，绕不开。</div>
+      <div class="note" data-i18n="expiry_note">It expires with your login session — about 3 days in practice. When it does, this page will say so clearly; just paste a fresh one. This is PT's own auth mechanism, there is no way around it.</div>
     </details>
   </div>
 
   <div class="card">
-    <h2>2 · 看板</h2>
+    <h2 data-i18n="step_dash">2 · Dashboard</h2>
     <div id="cacheState"></div>
     <div class="row">
-      <button onclick="openDash('en')">打开看板（English）</button>
-      <button class="sec" onclick="openDash('zh')">打开看板（中文）</button>
-      <button class="sec" onclick="openDemo()">先看示例看板（无需 token）</button>
+      <button onclick="openDash('en')" data-i18n="btn_open_en">Open dashboard (English)</button>
+      <button class="sec" onclick="openDash('zh')" data-i18n="btn_open_zh">打开看板（中文）</button>
+      <button class="sec" onclick="openDemo()" data-i18n="btn_demo">Preview with demo data (no token needed)</button>
     </div>
   </div>
 
   <div class="card">
-    <h2>已缓存的数据</h2>
+    <h2 data-i18n="cached_title">Cached data</h2>
     <div id="cacheTable"></div>
   </div>
 </div>
 <script>
+const I18N={
+ en:{
+  title:"PowerTokens Usage Dashboard",
+  subtitle:"Paste your token here and let it do the rest. Everything runs on this machine only.",
+  step_token:"1 · Session token",
+  token_label:"Paste the value of the <code>_Bearer</code> cookie (the whole JWT)",
+  token_ph:"eyJhbGciOi... (paste the whole string)",
+  btn_save:"Save token",
+  btn_fetch:"Fetch data",
+  where_title:"Where do I find this token?",
+  s1:"Open <b>powertokens.ai</b> in a browser and log in, then go to the Usage page",
+  s2:"Press <code>F12</code> → <b>Application</b> → <b>Cookies</b> → site <code>https://www.powertokens.ai</code>",
+  s3:"Find the one named <code>_Bearer</code> and copy its <b>Value</b>",
+  s4:"Paste it above and click <b>Save token</b>",
+  expiry_note:"It expires with your login session — about 3 days in practice. When it does, this page will say so clearly; just paste a fresh one. This is PT's own auth mechanism, there is no way around it.",
+  step_dash:"2 · Dashboard",
+  btn_open_en:"Open dashboard (English)",
+  btn_open_zh:"打开看板（中文）",
+  btn_demo:"Preview with demo data (no token needed)",
+  cached_title:"Cached data",
+  tok_saved:"Token saved",
+  tok_none:"No token yet",
+  tok_none_hint:"You can still preview the demo dashboard",
+  no_cache:"No cached data yet. Save a token, then click Fetch data.",
+  cached_n:"{n} records cached — opening the dashboard shows this last fetch.",
+  th_account:"Account", th_time:"Fetched at", th_records:"Records", th_amount:"Amount",
+  m_paste_first:"Paste a token first.",
+  m_saving:"Saving…",
+  m_saved_ok:"Token saved to config.json on this machine. Now click Fetch data.",
+  m_save_fail:"Save failed: ",
+  m_unknown:"unknown error",
+  m_fetching:"Fetching from PowerTokens — this can take 10s to a minute…",
+  m_fetch_ok:"Fetched {n} records, ${amt} total. Click Open dashboard below.",
+  m_fetch_fail:"Fetch failed",
+  m_refresh_hint:"Tip: open the dashboard again to see the latest data."
+ },
+ zh:{
+  title:"PowerTokens 用量看板",
+  subtitle:"在本机浏览器里粘贴 token，剩下的交给它。数据只在你这台电脑上跑。",
+  step_token:"1 · 会话 token",
+  token_label:"粘贴浏览器里 Cookie <code>_Bearer</code> 的值（一整串 JWT）",
+  token_ph:"eyJhbGciOi...（整串粘贴进来）",
+  btn_save:"保存 token",
+  btn_fetch:"拉取数据",
+  where_title:"这串 token 去哪儿找？",
+  s1:"浏览器打开 <b>powertokens.ai</b> 并登录，进「用量 / 消耗」页",
+  s2:"按 <code>F12</code> → <b>Application（应用）</b> → <b>Cookies</b> → 站点 <code>https://www.powertokens.ai</code>",
+  s3:"找到名为 <code>_Bearer</code> 的那条，复制它的 <b>Value</b>",
+  s4:"粘回上面的框里，点「保存 token」",
+  expiry_note:"它随登录会话失效，实测约 3 天。过期后页面会明说，重新粘一次就行 —— 这是 PT 网页的鉴权机制，绕不开。",
+  step_dash:"2 · 看板",
+  btn_open_en:"Open dashboard (English)",
+  btn_open_zh:"打开看板（中文）",
+  btn_demo:"先看示例看板（无需 token）",
+  cached_title:"已缓存的数据",
+  tok_saved:"token 已保存",
+  tok_none:"还没有 token",
+  tok_none_hint:"没保存也能先看示例看板",
+  no_cache:"还没有缓存数据。保存 token 后点「拉取数据」。",
+  cached_n:"已缓存 {n} 条记录，直接打开就是上次拉的结果。",
+  th_account:"账户", th_time:"拉取时间", th_records:"记录数", th_amount:"金额",
+  m_paste_first:"先把 token 粘进去。",
+  m_saving:"保存中…",
+  m_saved_ok:"token 已保存到本机 config.json。现在点「拉取数据」。",
+  m_save_fail:"保存失败：",
+  m_unknown:"未知错误",
+  m_fetching:"正在从 PowerTokens 拉取，可能要十几秒到一分钟…",
+  m_fetch_ok:"拉到 {n} 条记录，合计 ${amt}。点下面「打开看板」查看。",
+  m_fetch_fail:"拉取失败",
+  m_refresh_hint:"提示：重新打开看板即可看到最新数据。"
+ }
+};
+let CLANG = (localStorage.getItem("ptdash_ui") || "__DEF_LANG__");
+if(CLANG!=="en" && CLANG!=="zh") CLANG="__DEF_LANG__";
+function T(k,v){
+ let s=(I18N[CLANG]&&I18N[CLANG][k])||I18N.en[k]||k;
+ if(v) for(const p in v) s=s.split("{"+p+"}").join(v[p]);
+ return s;
+}
+function applyI18n(){
+ document.querySelectorAll("[data-i18n]").forEach(e=>{e.textContent=T(e.getAttribute("data-i18n"))});
+ document.querySelectorAll("[data-i18n-html]").forEach(e=>{e.innerHTML=T(e.getAttribute("data-i18n-html"))});
+ document.querySelectorAll("[data-i18n-ph]").forEach(e=>{e.placeholder=T(e.getAttribute("data-i18n-ph"))});
+ const b=document.getElementById("langBtn");
+ if(b) b.textContent = (CLANG==="zh" ? "EN" : "中文");
+ document.documentElement.lang = (CLANG==="zh" ? "zh-CN" : "en");
+ document.title = T("title") + " · " + (CLANG==="zh" ? "控制台" : "Console");
+}
+function toggleLang(){
+ CLANG = (CLANG==="zh" ? "en" : "zh");
+ localStorage.setItem("ptdash_ui", CLANG);
+ applyI18n(); refresh();
+}
 function show(cls, text){
-  const m=document.getElementById('msg');
-  m.className='msg '+cls; m.innerHTML=text;
+  const m=document.getElementById("msg");
+  m.className="msg "+cls; m.innerHTML=text;
 }
 async function jfetch(url, opts){
   const r=await fetch(url, opts); return await r.json();
 }
 async function refresh(){
-  const s=await jfetch('/api/status');
-  document.getElementById('tokenState').innerHTML = s.has_token
-    ? '<span class="pill ok">token 已保存</span>'
-    : '<span class="pill no">还没有 token</span> <span class="sub" style="margin:0">没保存也能先看示例看板</span>';
-  let ct='<div class="sub">还没有缓存数据。保存 token 后点「拉取数据」。</div>';
+  const s=await jfetch("/api/status");
+  document.getElementById("tokenState").innerHTML = s.has_token
+    ? '<span class="pill ok">'+T("tok_saved")+'</span>'
+    : '<span class="pill no">'+T("tok_none")+'</span> <span class="sub" style="margin:0">'+T("tok_none_hint")+'</span>';
+  let ct='<div class="sub">'+T("no_cache")+'</div>';
   if(s.cache && s.cache.length){
-    ct='<table><thead><tr><th>账户</th><th>拉取时间</th><th>记录数</th><th>金额</th></tr></thead><tbody>'+
+    ct='<table><thead><tr><th>'+T("th_account")+'</th><th>'+T("th_time")+'</th><th>'+T("th_records")+'</th><th>'+T("th_amount")+'</th></tr></thead><tbody>'+
       s.cache.map(c=>'<tr><td>'+c.account+'</td><td>'+c.fetched_at+'</td><td>'+c.records+'</td><td>$'+c.total.toFixed(4)+'</td></tr>').join('')+
       '</tbody></table>';
   }
-  document.getElementById('cacheTable').innerHTML=ct;
-  document.getElementById('cacheState').innerHTML = s.cache && s.cache.length
-    ? '<div class="sub" style="margin:0 0 4px">已缓存 '+s.cache.reduce((a,b)=>a+b.records,0)+' 条记录，直接打开就是上次拉的结果。</div>'
+  document.getElementById("cacheTable").innerHTML=ct;
+  document.getElementById("cacheState").innerHTML = s.cache && s.cache.length
+    ? '<div class="sub" style="margin:0 0 4px">'+T("cached_n",{n:s.cache.reduce((a,b)=>a+b.records,0)})+'</div>'
     : '';
 }
 async function saveToken(){
-  const t=document.getElementById('tok').value.trim();
-  if(!t){ show('err','先把 token 粘进去。'); return; }
-  show('info','保存中…');
-  const r=await jfetch('/api/token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:t})});
-  if(r.ok){ show('ok','token 已保存到本机 config.json。现在点「拉取数据」。'); refresh(); }
-  else show('err','保存失败：'+(r.error||'未知错误'));
+  const t=document.getElementById("tok").value.trim();
+  if(!t){ show("err", T("m_paste_first")); return; }
+  show("info", T("m_saving"));
+  const r=await jfetch("/api/token",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:t})});
+  if(r.ok){ show("ok", T("m_saved_ok")); refresh(); }
+  else show("err", T("m_save_fail")+(r.error||T("m_unknown")));
 }
 async function fetchData(){
-  show('info','正在从 PowerTokens 拉取，可能要十几秒到一分钟…');
-  const r=await jfetch('/api/fetch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});
+  show("info", T("m_fetching"));
+  const r=await jfetch("/api/fetch",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({lang:CLANG})});
   if(r.ok){
-    show('ok','拉到 '+r.records+' 条记录，合计 $'+Number(r.total||0).toFixed(4)+'。点下面「打开看板」查看。'+(r.warn?'<br>'+r.warn:''));
+    show("ok", T("m_fetch_ok",{n:r.records,amt:Number(r.total||0).toFixed(4)})+(r.warn?"<br>"+r.warn:""));
     refresh();
   } else {
-    show('err',(r.error||'拉取失败')+(r.hint?'<br><br>'+r.hint:''));
+    show("err", (r.error||T("m_fetch_fail"))+(r.hint?"<br><br>"+r.hint:""));
     refresh();
   }
 }
-function openDash(lang){ window.open('/dashboard?lang='+lang,'_blank'); }
-function openDemo(){ window.open('/demo','_blank'); }
+function openDash(lang){ window.open("/dashboard?lang="+lang,"_blank"); }
+function openDemo(){ window.open("/demo","_blank"); }
+applyI18n();
 refresh();
 </script>
 </body>
 </html>
 """
+
+
+def render_page(lang="en"):
+    """把控制台页面里的语言占位符按 lang 渲染出来。"""
+    if lang not in ("en", "zh"):
+        lang = DEFAULT_LANG
+    return (PAGE
+            .replace("__DEF_LANG__", lang)
+            .replace("__HTML_LANG__", "zh-CN" if lang == "zh" else "en")
+            .replace("__TITLE__",
+                     "PowerTokens 用量看板 · 控制台" if lang == "zh"
+                     else "PowerTokens Usage Dashboard · Console"))
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -438,7 +569,7 @@ class Handler(BaseHTTPRequestHandler):
             lang = DEFAULT_LANG
         try:
             if u.path in ("/", "/index.html"):
-                self._send(PAGE)
+                self._send(render_page(lang))
             elif u.path == "/api/status":
                 self._json({"has_token": has_token(), "cache": cache_status()})
             elif u.path == "/dashboard":
@@ -458,23 +589,29 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         u = urlparse(self.path)
+        q = parse_qs(u.query)
         length = int(self.headers.get("Content-Length") or 0)
         raw = self.rfile.read(length) if length else b"{}"
         try:
             payload = json.loads(raw.decode("utf-8") or "{}")
         except Exception:
             payload = {}
+        lang = str(payload.get("lang") or q.get("lang", [DEFAULT_LANG])[0]
+                   or DEFAULT_LANG).lower()
+        if lang not in ("en", "zh"):
+            lang = DEFAULT_LANG
         try:
             if u.path == "/api/token":
                 tok = (payload.get("token") or "").strip()
                 if not tok:
-                    self._json({"ok": False, "error": "token 为空"})
+                    self._json({"ok": False,
+                                "error": "token 为空" if lang == "zh" else "Token is empty"})
                     return
                 save_token(tok)
                 self._json({"ok": True})
             elif u.path == "/api/fetch":
                 since = payload.get("since") or DEFAULT_SINCE
-                self._json(do_fetch(since))
+                self._json(do_fetch(since, lang=lang))
             else:
                 self._json({"ok": False, "error": "未知接口"}, 404)
         except Exception as e:

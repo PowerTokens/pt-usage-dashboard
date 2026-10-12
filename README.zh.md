@@ -74,7 +74,9 @@ python3 scripts/gen_dashboard.py --out pt-usage.html
 run.bat           # Windows
 ```
 
-它会起一个本机小服务并**自动打开浏览器**，页面上点几下就完事：
+它会起一个本机小服务并**自动打开浏览器**，页面上点几下就完事。控制台本身也是中英双语（右上角切换）：
+
+![网页控制台 — 中文](docs/console-zh.png)
 
 | 你想干什么 | 怎么操作 |
 |---|---|
@@ -84,7 +86,7 @@ run.bat           # Windows
 | 看看板 | 点**打开看板（English / 中文）**，直接在浏览器里渲染出来 |
 | token 过期了？ | 页面会用大白话告诉你（PT 会话 token 约 3 天失效），重新粘一个就行 |
 
-也可以直接跑：`python3 serve.py`（可加 `--port 9000`、`--no-open`）。
+也可以直接跑：`python3 serve.py`（可加 `--port 9000`、`--no-open`、`--lang en|zh`）。
 
 > **隐私：** 只监听 `127.0.0.1` 本机。token 只写进你本机的 `config.json`，只发给 `powertokens.ai`，不会给任何第三方。
 > **为什么不能做成在线网页？** 用量数据在 PT 的私有控制台接口后面，浏览器直连会被 CORS + Cookie 鉴权挡住，必须有本机这一层。所以这是能达到的、最接近"打开网页就能用"的形态。

@@ -74,7 +74,11 @@ If Python is already installed, you never need to touch a terminal again — and
 run.bat           # Windows
 ```
 
-This starts a tiny local server and **opens your browser automatically**. In the page you can:
+This starts a tiny local server and **opens your browser automatically**. The console itself is bilingual (中文 / EN switch at top-right):
+
+![Web console — English](docs/console-en.png)
+
+In the page you can:
 
 | What you want | What you do |
 |---|---|
@@ -84,7 +88,7 @@ This starts a tiny local server and **opens your browser automatically**. In the
 | View the dashboard | Click **打开看板（English / 中文）** — renders straight in the browser |
 | Token expired? | The page says so in plain language (PT's session token lasts ~3 days) — just paste a fresh one |
 
-Or run it directly: `python3 serve.py` (add `--port 9000`, `--no-open`).
+Or run it directly: `python3 serve.py` (add `--port 9000`, `--no-open`, `--lang en|zh`).
 
 > **Privacy:** the server binds to `127.0.0.1` only. Your token is written to your local `config.json` and sent only to `powertokens.ai`. Nothing leaves your machine to any third party.
 > **Why not a hosted page?** The usage data lives behind PowerTokens' private console API, which a browser cannot call directly (CORS + cookie auth). A local helper is unavoidable — this is as close to "just open a page" as it can get.

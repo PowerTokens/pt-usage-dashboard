@@ -20,7 +20,7 @@
 
 仅依赖标准库。
 """
-import argparse, json, os, sys, time, datetime, urllib.request, urllib.error
+import argparse, json, os, re, sys, time, datetime, urllib.request, urllib.error
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
