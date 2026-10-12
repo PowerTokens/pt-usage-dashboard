@@ -67,6 +67,19 @@ Open the generated `pt-usage.html` in a browser. **No URL, no server running** �
 
 ---
 
+## Updating (if you already installed it)
+
+| How you installed it | How to update |
+|---|---|
+| **Cloned with git** | `cd pt-usage-dashboard && git pull` — your `config.json` and cached `pt_usage_server*.json` are gitignored, so they are never overwritten or deleted. |
+| **Copied / downloaded the folder** (e.g. installed as a WorkBuddy skill) | Re-download the latest version and replace the folder. Keep your old `config.json` (or simply re-fill your token afterwards) — everything else can be overwritten. |
+
+After updating, regenerate the dashboard to see the changes: `./run.sh` (or the two commands in Quick Start).
+
+> **Your private files survive an update:** `config.json` (your token), `pt_usage_server*.json` (fetched data), `pt_conversation_map.json` and `*.html` are all listed in `.gitignore`, so `git pull` never touches them.
+
+---
+
 ## How to build it in other agents / tools (universal)
 
 No matter which agent you use, the steps are identical — **open its terminal, cd into the repo, run the two commands**:

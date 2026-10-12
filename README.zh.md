@@ -67,6 +67,19 @@ python3 scripts/gen_dashboard.py --out pt-usage.html
 
 ---
 
+## 更新（已安装的用户）
+
+| 你的安装方式 | 如何更新 |
+|---|---|
+| **用 git 克隆的** | `cd pt-usage-dashboard && git pull` —— `config.json` 和缓存的 `pt_usage_server*.json` 都在 `.gitignore` 里，不会被覆盖或删除。 |
+| **直接复制 / 下载目录的**（比如当 WorkBuddy skill 装） | 重新下载最新版，替换整个目录。保留好旧的 `config.json`（或替换后重新填一次 token），其余文件可以直接覆盖。 |
+
+更新后重新生成看板即可看到变化：`./run.sh`（或跑快速开始里的两条命令）。
+
+> **更新不会弄丢你的私密文件：** `config.json`（你的 token）、`pt_usage_server*.json`（拉取的数据）、`pt_conversation_map.json`、`*.html` 都在 `.gitignore` 里，`git pull` 不会动它们。
+
+---
+
 ## 在其它 agent / 工具里怎么产生看板（通用方式）
 
 不管你在哪个 agent 里，步骤一模一样——**找到它的终端，cd 进仓库，跑两条命令**：
