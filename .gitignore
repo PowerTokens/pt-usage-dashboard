@@ -11,6 +11,9 @@ pt_calls.jsonl
 pt_models.json
 *.html
 
+# 站点源码（GitHub Pages 从 /docs 部署，需入库；其余生成的 html 仍忽略）
+!/docs/index.html
+
 # ===== Python =====
 __pycache__/
 *.pyc
