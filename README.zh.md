@@ -63,7 +63,33 @@ python3 scripts/gen_dashboard.py --out pt-usage.html
 ```
 用浏览器打开生成的 `pt-usage.html` 即可。**全程没有网址、没有服务器在跑**，就是写了一个本地文件。
 
-> **一键版：** 也可以直接跑仓库根目录的 `./run.sh`（macOS/Linux，`./run.sh zh` 出中文版）或 `run.bat`（Windows，`run.bat zh`），自动完成「拉数据 → 生成看板」两步。
+---
+
+## ⭐ 更省事的方式：本地网页控制台（推荐）
+
+只要装好了 Python，之后就不用再碰终端，也不用去 F12 找 Cookie、手改 `config.json`：
+
+```bash
+./run.sh          # macOS / Linux
+run.bat           # Windows
+```
+
+它会起一个本机小服务并**自动打开浏览器**，页面上点几下就完事：
+
+| 你想干什么 | 怎么操作 |
+|---|---|
+| 先看看长什么样 | 点**「先看示例看板」** —— 内置示例数据，不需要 token |
+| 填 token | 把 `_Bearer` 的值粘进框里 → **保存 token**（自动写进 config.json） |
+| 拉数据 | 点**拉取数据** |
+| 看看板 | 点**打开看板（English / 中文）**，直接在浏览器里渲染出来 |
+| token 过期了？ | 页面会用大白话告诉你（PT 会话 token 约 3 天失效），重新粘一个就行 |
+
+也可以直接跑：`python3 serve.py`（可加 `--port 9000`、`--no-open`）。
+
+> **隐私：** 只监听 `127.0.0.1` 本机。token 只写进你本机的 `config.json`，只发给 `powertokens.ai`，不会给任何第三方。
+> **为什么不能做成在线网页？** 用量数据在 PT 的私有控制台接口后面，浏览器直连会被 CORS + Cookie 鉴权挡住，必须有本机这一层。所以这是能达到的、最接近"打开网页就能用"的形态。
+
+> **还是想用命令行？** `./run.sh cli`（或 `run.bat cli`）走上面那两条命令。
 
 ---
 

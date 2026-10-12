@@ -63,7 +63,33 @@ python3 scripts/gen_dashboard.py --out pt-usage.html
 ```
 Open the generated `pt-usage.html` in a browser. **No URL, no server running** — it's just a local file.
 
-> **One click:** Or just run `./run.sh` (macOS/Linux, `./run.sh zh` for Chinese) or `run.bat` (Windows) at the repo root — it does both steps for you.
+---
+
+## ⭐ Easier way: the local web console (recommended)
+
+If Python is already installed, you never need to touch a terminal again — and you never need to hunt for a Cookie or edit `config.json` by hand:
+
+```bash
+./run.sh          # macOS / Linux
+run.bat           # Windows
+```
+
+This starts a tiny local server and **opens your browser automatically**. In the page you can:
+
+| What you want | What you do |
+|---|---|
+| See what it looks like first | Click **「先看示例看板」** — built-in demo data, no token needed |
+| Add your token | Paste the `_Bearer` cookie value in the box → **保存 token** (written to `config.json` for you) |
+| Pull your data | Click **拉取数据** — it fetches and caches |
+| View the dashboard | Click **打开看板（English / 中文）** — renders straight in the browser |
+| Token expired? | The page says so in plain language (PT's session token lasts ~3 days) — just paste a fresh one |
+
+Or run it directly: `python3 serve.py` (add `--port 9000`, `--no-open`).
+
+> **Privacy:** the server binds to `127.0.0.1` only. Your token is written to your local `config.json` and sent only to `powertokens.ai`. Nothing leaves your machine to any third party.
+> **Why not a hosted page?** The usage data lives behind PowerTokens' private console API, which a browser cannot call directly (CORS + cookie auth). A local helper is unavoidable — this is as close to "just open a page" as it can get.
+
+> **Prefer the command line?** `./run.sh cli` (or `run.bat cli`) runs the two-command flow above.
 
 ---
 
