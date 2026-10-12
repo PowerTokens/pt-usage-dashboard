@@ -67,6 +67,34 @@ python <skill目录>/scripts/gen_dashboard.py --out <工作区>/pt-usage.html
 1. **WorkBuddy 现有日志**：`~/.workbuddy/projects/**/*.jsonl` 中 `providerData.model` 命中 PT 模型特征（seedance / wan / kling / dreamina / minimax / hunyuan-video / flux / kolors / cosyvoice 等，或 `provider` 为 `powertokens`/`pt`）的记录。成本按 PRICE 表估算。
 2. **skill 自带调用记录器 `pt_log.py`**：在 dsh / pt CLI / 自建脚本里调 PT 后记一笔，或把 PT 报错贴给它解析真实费用（`need quota: $0.200000`）。写入 `pt_calls.jsonl`。
 
+## 🚀 首选路径：本地网页控制台（推荐给非技术同事）
+
+**不想敲命令、不想手改 `config.json` 时走这条路。** 一条命令起本地服务 → 自动开浏览器 → 页面里粘贴 token → 点按钮出看板。
+
+```
+python <skill目录>/serve.py            # 自动开浏览器；加 --no-open 不自动开
+python <skill目录>/serve.py --port 8777 --lang zh
+```
+
+或直接用一键脚本（仓库根目录）：`./run.sh`（macOS/Linux）/ `run.bat`（Windows），加 `zh` 出中文版，加 `cli` 走命令行老路径。
+
+控制台做了四件事（对应团队最常见的四个吐槽）：
+
+| 痛点 | 控制台怎么解 |
+|---|---|
+| 要装 Python + 敲命令 | 一条命令起服务并自动开浏览器，之后全程点鼠标 |
+| 要 F12 找 `_Bearer` + 手改 `config.json` | 页面里粘贴 token，自动写回 `config.json`，不用碰文件 |
+| 没 token 看不到效果 | **「先看示例看板」**按钮，内置 45 天样例数据；看板顶部有橙色「示例数据」横幅防混淆 |
+| token 过期报错看不懂 | 401 翻译成人话：「登录已过期（约 3 天失效）。请重新打开 PT 网页登录，复制 Cookie `_Bearer` 的值，粘贴到下面重新拉取。」 |
+
+技术说明（不要试图改成纯静态托管页）：
+
+- 控制台 `serve.py` 直接 **import 复用** `fetch_pt_server.PTConsole` / `fetch_all_records` 与 `gen_dashboard.render_html`，缓存格式与渲染管线跟命令行版**完全一致**，数据不会有任何偏差。
+- **只监听 `127.0.0.1`**，token 只写本机、只发给 powertokens.ai，不外发。
+- 因为用的是 `www.powertokens.ai/api` **私有 cookie 接口**，浏览器直连会被 CORS + 跨源 cookie 挡住，**必须**有本机服务这一层做代理。这点与官方 `video-studio-web`（浏览器直连 `api.powertokens.ai/v1`，CORS 允许）不同，**无法做成"发个链接别人直接打开"的在线网页**。
+
+---
+
 ## 执行步骤
 
 1. **确认 Python**：脚本仅依赖 Python 3.8+ 标准库（**无需安装任何依赖**），用系统 `python3` / `python` 运行即可（WorkBuddy 环境会优先用托管 Python）。
@@ -133,7 +161,7 @@ python <skill目录>/scripts/gen_dashboard.py --out <工作区>/pt-usage.html
 - **按模态占比**：视频 / 图像 / 音频 / 对话 环形图
 - **按 API Key 成本**：每个 key 的调用数 / 金额 / quota / 主要模型 / 最近调用（全量精确）
 - **调用 ↔ 对话 归因**：匹配率、已归因金额、其它客户端金额；Top 会话（时间 / 工作目录 / 会话号 / 调用数 / 金额 / 模型）
-- **调用明细**：最近 N 条（时间 / 模型 / 参数 / 状态 / 预估 / 真实费用 / 来源）
+- **调用明细**：**全量数据都嵌在 HTML 里**，默认渲染 200 行（避免上千行卡顿），标题旁显示「Showing 200 of 5738」，点「Show all N records / 显示全部 N 条」展开全部；展开状态记在 `localStorage`，下次打开保持（字段：时间 / 模型 / 参数 / 状态 / 预估 / 真实费用 / 来源）
 
 > 分布类图表（日活/山脊/时段/堆叠柱）由前端从逐笔数据（`DATA.recs`：ts/model/tokens/成本）实时计算，全部支持时间筛选；逐笔 token 明细来自服务端 Source ①。
 - 深浅色主题切换（记忆偏好）、1 / 7 / 30 天窗口 + 自定义区间

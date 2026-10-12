@@ -39,6 +39,7 @@ import gen_dashboard as gd  # noqa: E402
 SKILL_DIR = HERE
 CONFIG_PATH = os.path.join(SKILL_DIR, "config.json")
 DEFAULT_SINCE = "2025-01-01"
+DEFAULT_LANG = "en"  # 看板首次打开的语言；由 --lang 覆盖，页面右上角仍可随时切换
 
 ACCENT = "#4f7cff"
 
@@ -432,9 +433,9 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         u = urlparse(self.path)
         q = parse_qs(u.query)
-        lang = (q.get("lang", ["en"])[0] or "en").lower()
+        lang = (q.get("lang", [DEFAULT_LANG])[0] or DEFAULT_LANG).lower()
         if lang not in ("en", "zh"):
-            lang = "en"
+            lang = DEFAULT_LANG
         try:
             if u.path in ("/", "/index.html"):
                 self._send(PAGE)
@@ -487,12 +488,18 @@ def main():
     ap.add_argument("--port", type=int, default=8777, help="监听端口（默认 8777）")
     ap.add_argument("--host", default="127.0.0.1", help="监听地址（默认仅本机）")
     ap.add_argument("--no-open", action="store_true", help="不自动打开浏览器")
+    ap.add_argument("--lang", default="en", choices=["en", "zh"],
+                    help="看板首次打开的语言（默认 en；页面右上角仍可随时切换）")
     args = ap.parse_args()
+
+    global DEFAULT_LANG
+    DEFAULT_LANG = args.lang
 
     url = "http://%s:%d/" % (args.host, args.port)
     print("=" * 56)
     print(" PT 用量看板 · 本地控制台")
     print(" 地址：%s" % url)
+    print(" 语言：%s（页面右上角可切换）" % args.lang)
     print(" 只监听本机，token 不出这台电脑。按 Ctrl+C 停止。")
     print("=" * 56)
 
