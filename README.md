@@ -25,6 +25,21 @@ Both share the same `scripts/*.py` with identical logic. Section ① is the prim
 
 ---
 
+## 截图预览 / Screenshots
+
+同一份数据、同一个看板，右上角一键切换中英文（示例为真实数据渲染）：
+Same dashboard, one-click language switch at top-right (real data shown):
+
+**English（默认 / default）**
+
+![PowerTokens Usage Dashboard — English](docs/screenshot-en.png)
+
+**中文**
+
+![PowerTokens 用量看板 — 中文](docs/screenshot-zh.png)
+
+---
+
 ## 快速开始（3 步）/ Quick Start (3 steps)
 
 ### 1. 准备 Python / Prepare Python
@@ -50,6 +65,8 @@ python3 scripts/gen_dashboard.py --out pt-usage.html
 ```
 用浏览器打开生成的 `pt-usage.html` 即可。**全程没有网址、没有服务器在跑**，就是写了一个本地文件。/ Open the generated `pt-usage.html` in a browser. **No URL, no server running** — it's just a local file.
 
+> **一键版 / One click:** 也可以直接跑仓库根目录的 `./run.sh`（macOS/Linux，`./run.sh zh` 出中文版）或 `run.bat`（Windows，`run.bat zh`），自动完成「拉数据 → 生成看板」两步。/ Or just run `./run.sh` (macOS/Linux, `./run.sh zh` for Chinese) or `run.bat` (Windows) at the repo root — it does both steps for you.
+
 ---
 
 ## 在其它 agent / 工具里怎么产生看板（通用方式）/ How to build it in other agents / tools (universal)
@@ -73,6 +90,7 @@ python3 scripts/gen_dashboard.py --out pt-usage.html
    python3 scripts/gen_dashboard.py --out pt-usage.html
    ```
    生成的 `pt-usage.html` 是本地文件，双击即可在浏览器看。**不需要 WorkBuddy、不需要联网、不需要任何服务在跑。** / The generated `pt-usage.html` is a local file — double-click to view in a browser. **No WorkBuddy, no network, no service required.**
+   （嫌两条命令麻烦？仓库根目录有 `./run.sh` / `run.bat` 一键跑完这两步。/ Find two commands tedious? `./run.sh` / `run.bat` at the repo root does both.)
 
 ---
 
