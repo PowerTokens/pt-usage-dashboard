@@ -352,7 +352,7 @@ def render_html(skill_dir, recs, agg, catalog, theme, server_meta=None, conv=Non
     conv = conv or {}
     recs_sorted = sorted([r for r in recs if r["ts"]], key=lambda x: x["ts"])
     recs_sorted = recs_sorted + [r for r in recs if not r["ts"]]
-    recent = list(reversed(recs_sorted))[:200]
+    recent = list(reversed(recs_sorted))
 
     # 日序列（按天聚合，补零）
     days = sorted(agg["by_day"].keys())
@@ -431,37 +431,47 @@ def render_html(skill_dir, recs, agg, catalog, theme, server_meta=None, conv=Non
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PowerTokens Usage Dashboard</title>
 <style>
-:root{--bg:#f5f7fa;--card:#ffffff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--accent:#2563eb;--est:#2563eb;--real:#16a34a;--vid:#6366f1;--img:#ec4899;--aud:#f59e0b;--chat:#10b981;--other:#9ca3af}
-[data-theme=dark]{--bg:#0f172a;--card:#1e293b;--ink:#e2e8f0;--muted:#94a3b8;--line:#334155;--accent:#60a5fa;--est:#60a5fa;--real:#4ade80}
+:root{--bg:#f4f6fb;--card:#ffffff;--ink:#1f2937;--muted:#7b8494;--line:#e8ecf3;--accent:#4f7cff;--accent-soft:#eef3ff;--est:#4f7cff;--real:#22c55e;--vid:#7c8cff;--img:#f472b6;--aud:#fbbf24;--chat:#34d399;--other:#aab2c0;--shadow:0 1px 3px rgba(16,24,40,.06),0 8px 22px -10px rgba(16,24,40,.12);--radius:16px}
+[data-theme=dark]{--bg:#0e1320;--card:#161c2c;--ink:#e7ecf5;--muted:#9aa6bd;--line:#26304a;--accent:#6b93ff;--accent-soft:#1b2740;--est:#6b93ff;--real:#4ade80;--shadow:0 1px 3px rgba(0,0,0,.3),0 10px 26px -12px rgba(0,0,0,.5)}
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);padding:20px;line-height:1.5}
-.wrap{max-width:1100px;margin:0 auto}
-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px}
-h1{font-size:20px;margin:0}
-.sub{color:var(--muted);font-size:12px}
-button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
-.kpi .v{font-size:22px;font-weight:700}
-.kpi .l{font-size:12px;color:var(--muted);margin-top:4px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:760px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
-.card h2{font-size:14px;margin:0 0 10px}
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:6px}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:middle}
-table{width:100%;border-collapse:collapse;font-size:12px}
-th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
-th{color:var(--muted);font-weight:600;position:sticky;top:0;background:var(--card)}
-.scroll{max-height:340px;overflow:auto}
-.tag{padding:1px 7px;border-radius:10px;font-size:11px}
-.t-succ{background:#dcfce7;color:#166534}.t-fail{background:#fee2e2;color:#991b1b}.t-unk{background:#f1f5f9;color:#475569}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);padding:clamp(14px,3vw,28px);line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1200px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+h1{font-size:clamp(18px,2.4vw,24px);margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:12.5px}
+button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:7px 14px;cursor:pointer;font-size:13px;transition:.15s;font-family:inherit}
+button:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px;margin-bottom:20px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);transition:.15s;position:relative;overflow:hidden}
+.kpi:hover{transform:translateY(-2px);box-shadow:0 2px 6px rgba(16,24,40,.08),0 14px 30px -12px rgba(16,24,40,.18)}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+.kpi .v{font-size:clamp(18px,2vw,24px);font-weight:750;letter-spacing:-.02em;line-height:1.1}
+.kpi .l{font-size:12px;color:var(--muted);margin-top:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:780px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);transition:.15s}
+.card:hover{box-shadow:0 2px 6px rgba(16,24,40,.06),0 16px 34px -14px rgba(16,24,40,.18)}
+.card h2{font-size:14.5px;margin:0 0 12px;font-weight:650}
+.card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.card-h h2{margin:0}
+.mini{font-size:11px;padding:4px 11px;border-radius:8px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--muted);font-weight:600;position:sticky;top:0;background:var(--card);font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+tbody tr:nth-child(even){background:rgba(79,124,255,.045)}
+tbody tr:hover{background:var(--accent-soft);transition:background .1s}
+.scroll{max-height:380px;overflow:auto;border-radius:10px;border:1px solid var(--line)}
+.tag{padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.t-succ{background:#dcfce7;color:#15803d}.t-fail{background:#fee2e2;color:#b91c1c}.t-unk{background:#eef2f7;color:#475569}
 .t-wb{background:#e0e7ff;color:#3730a3}.t-log{background:#fef3c7;color:#92400e}.t-srv{background:#dbeafe;color:#1e40af}
-.empty{color:var(--muted);font-size:13px;padding:20px;text-align:center}
+.empty{color:var(--muted);font-size:13px;padding:24px;text-align:center}
 .fbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.fb.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.fb{border-radius:20px;padding:6px 14px}
+.fb.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 10px -3px rgba(79,124,255,.5)}
 svg{width:100%;height:auto;display:block}
-.tip{position:fixed;pointer-events:none;background:#111;color:#fff;font-size:11px;padding:4px 8px;border-radius:6px;opacity:0;transition:opacity .1s;z-index:9}
+.tip{position:fixed;pointer-events:none;background:#1f2937;color:#fff;font-size:11px;padding:5px 9px;border-radius:7px;opacity:0;transition:opacity .1s;z-index:9}
 </style>
 </head>
 <body data-theme="__THEME__">
@@ -491,13 +501,14 @@ svg{width:100%;height:auto;display:block}
 <div class="card" style="margin-top:14px"><h2 data-i18n="off_title">Official Stats</h2><div id="offInfo"></div></div>
 <div class="card" style="margin-top:14px"><h2 data-i18n="key_title">By API Key</h2><div id="keyInfo"></div></div>
 <div class="card" style="margin-top:14px"><h2 data-i18n="conv_title">Attribution</h2><div id="convInfo"></div></div>
-<div class="card" style="margin-top:14px"><h2 data-i18n="tbl_title">Call Details</h2><div class="scroll"><table id="tbl"><thead><tr><th data-i18n="th_time">Time</th><th data-i18n="th_model">Model</th><th data-i18n="th_mod">Modality</th><th data-i18n="th_sec">Sec</th><th data-i18n="th_res">Res</th><th data-i18n="th_status">Status</th><th data-i18n="th_est">Est $</th><th data-i18n="th_real">Real $</th><th data-i18n="th_src">Source</th></tr></thead><tbody></tbody></table></div></div>
+<div class="card" style="margin-top:14px"><div class="card-h"><h2 data-i18n="tbl_title">Call Details</h2><div style="display:flex;align-items:center;gap:10px"><span class="sub" id="tblCount"></span><button id="tblToggle" class="mini" onclick="__tblAll=!__tblAll;localStorage.setItem('ptdash_tbl_all',__tblAll?'1':'0');renderTable()" style="display:none"></button></div></div><div class="scroll"><table id="tbl"><thead><tr><th data-i18n="th_time">Time</th><th data-i18n="th_model">Model</th><th data-i18n="th_mod">Modality</th><th data-i18n="th_sec">Sec</th><th data-i18n="th_res">Res</th><th data-i18n="th_status">Status</th><th data-i18n="th_est">Est $</th><th data-i18n="th_real">Real $</th><th data-i18n="th_src">Source</th></tr></thead><tbody></tbody></table></div></div>
 <div class="card" style="margin-top:14px" id="catalogCard"><h2 data-i18n="catalog_title">Catalog</h2><div id="catalogBody"></div></div>
 </div>
 <div class="tip" id="tip"></div>
 <script>
 const DATA = __DATA__;
 let LANG = (localStorage.getItem("ptdash_lang") || "__DEF_LANG__");
+let __tblAll = (localStorage.getItem("ptdash_tbl_all") === "1");
 const I18N = {
  en:{
   title:"PowerTokens Usage Dashboard", toggle_theme:"Theme", toggle_lang:"中文",
@@ -509,7 +520,7 @@ const I18N = {
   hourly_title:"0–24h Distribution · by Model",
   dailymodel_title:"Daily Model Usage Ratio (stacked calls)",
   off_title:"PT Console Official Stats (server)", key_title:"Cost by API Key (full)",
-  conv_title:"Call ↔ Conversation Attribution", tbl_title:"Call Details (latest 200)",
+  conv_title:"Call ↔ Conversation Attribution", tbl_title:"Call Details", tbl_show_all:"Show all {n} records", tbl_show_less:"Show less", tbl_showing:"Showing {a} of {b}", tbl_showing_all:"All {n} records",
   catalog_title:"PT Model Catalog (pt_models.json, optional)",
   kpi_cost:"Cost (selected range, server-exact)", kpi_calls:"Calls", kpi_tokens:"Total Tokens",
   kpi_io:"Input : Output", kpi_active:"Active Days", kpi_balance:"Account Balance",
@@ -550,7 +561,7 @@ const I18N = {
   ridge_title:"单次请求 token 大小分布（按模型，50%/90% 分位）",
   hourly_title:"0-24 时分布 · 按模型", dailymodel_title:"每日模型用量比例（调用次数堆叠）",
   off_title:"PT 控制台官方统计（服务端）", key_title:"按 API Key 成本（全量精确）",
-  conv_title:"调用 ↔ 对话 归因", tbl_title:"调用明细（最近 200 条）",
+  conv_title:"调用 ↔ 对话 归因", tbl_title:"调用明细", tbl_show_all:"显示全部 {n} 条", tbl_show_less:"收起", tbl_showing:"显示 {a} / 共 {b} 条", tbl_showing_all:"全部 {n} 条",
   catalog_title:"PT 模型目录对照（pt_models.json，可选）",
   kpi_cost:"消耗（所选范围，服务端精确）", kpi_calls:"调用次数", kpi_tokens:"总 Token",
   kpi_io:"输入 : 输出", kpi_active:"活跃天数", kpi_balance:"账户余额",
@@ -803,14 +814,23 @@ function renderOff(){
 }
 function renderTable(){
  const tb=document.querySelector("#tbl tbody");
- if(!DATA.recent.length){tb.innerHTML='<tr><td colspan="9" class="empty">'+T("tbl_empty")+'</td></tr>';return;}
- tb.innerHTML=DATA.recent.map(r=>`<tr>
+ const btn=document.getElementById("tblToggle");
+ const cnt=document.getElementById("tblCount");
+ if(!DATA.recent.length){tb.innerHTML='<tr><td colspan="9" class="empty">'+T("tbl_empty")+'</td></tr>';if(btn)btn.style.display="none";if(cnt)cnt.textContent="";return;}
+ const all=__tblAll;
+ const rows=all?DATA.recent:DATA.recent.slice(0,200);
+ tb.innerHTML=rows.map(r=>`<tr>
   <td>${r.ts}</td><td>${r.model}</td><td>${modLabel(r.mod)}</td>
   <td>${r.sec??"-"}</td><td>${r.res??"-"}</td>
   <td><span class="tag ${r.status==='success'?'t-succ':r.status==='failed'?'t-fail':'t-unk'}">${r.status}</span></td>
   <td>${r.est==null?'-':"$"+Number(r.est).toFixed(4)}</td>
   <td>${r.real==null?'-':"$"+Number(r.real).toFixed(4)}</td>
   <td><span class="tag ${r.src==='server'?'t-srv':r.src==='workbuddy'?'t-wb':'t-log'}">${r.src}</span></td></tr>`).join("");
+ if(cnt)cnt.textContent=all?T("tbl_showing_all",{n:DATA.recent.length}):T("tbl_showing",{a:rows.length,b:DATA.recent.length});
+ if(btn){
+  if(DATA.recent.length>200){btn.style.display="inline-block";btn.textContent=all?T("tbl_show_less"):T("tbl_show_all",{n:DATA.recent.length});}
+  else btn.style.display="none";
+ }
 }
 function renderKeys(){
   const el=document.getElementById("keyInfo");const keys=(DATA.conv&&DATA.conv.keys)||[];

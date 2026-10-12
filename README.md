@@ -165,7 +165,7 @@ The two are **not interchangeable**: only a login session can query usage/billin
 - **Time filter bar**: 24h / 3d / 7d / 30d / 90d / All, linked to every chart
 - **Cost trend** (daily line), **daily activity** (hour×date heatmap), **token size distribution** (per-model ridge), **0–24h by model**, **daily model usage stacked bars**
 - **Cost by model**, **by modality** (video/image/audio/chat), **by API Key** (full precision)
-- **Call ↔ conversation attribution**, **call details** (latest 200)
+- **Call ↔ conversation attribution**, **call details** (latest 200 shown by default, one click to expand all records)
 - Light/dark theme toggle (remembered) plus the top-right **中文 / EN language switch**
 
 ---
