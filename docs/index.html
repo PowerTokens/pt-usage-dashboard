@@ -606,12 +606,12 @@ async function ptPost(path, body, token){
   try{
     const resp=await fetch(PT_API+path, {
       method:"POST",
+      // CORS preflight allow-list on api server only covers
+      // Origin,Content-Length,Content-Type,Authorization — extra custom
+      // headers (X-App-Version etc.) would be rejected by the browser.
       headers:{
         "Authorization": token,
-        "Content-Type":"application/json",
-        "X-App-Version":"2.0.3",
-        "Locale":"en",
-        "Zone-Offset":"8"
+        "Content-Type":"application/json"
       },
       body: JSON.stringify(body||{}),
       signal: ctrl.signal
