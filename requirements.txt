@@ -1,0 +1,4 @@
+# 本工具仅使用 Python 3.8+ 标准库，无需安装任何第三方依赖。
+# 直接用系统 python3 / python 运行 scripts/ 下的脚本即可：
+#   python3 scripts/fetch_pt_server.py --since 2025-01-01
+#   python3 scripts/gen_dashboard.py --out pt-usage.html

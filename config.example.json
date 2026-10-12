@@ -1,0 +1,9 @@
+{
+  "comment": "复制本文件为 config.json 并填入你的 PT 浏览器会话 token。config.json 已被 .gitignore 忽略，不会进仓库。只需要填一种：单账户用 session_token，多账户用 accounts 列表。",
+  "base_url": "https://www.powertokens.ai/api",
+  "session_token": "",
+  "accounts": [
+    { "name": "账户A", "session_token": "" },
+    { "name": "账户B", "session_token": "" }
+  ]
+}

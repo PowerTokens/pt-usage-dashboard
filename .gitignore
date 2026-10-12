@@ -1,0 +1,23 @@
+# ===== 私密 / 运行时凭据（切勿提交）=====
+# 含你的 PT 登录会话 token，提交到 git 等同泄露账号
+config.json
+config.local.json
+
+# ===== 运行时产物（含真实用量数据，不入仓）=====
+pt_usage_server.json
+pt_usage_server_*.json
+pt_conversation_map.json
+pt_calls.jsonl
+pt_models.json
+*.html
+
+# ===== Python =====
+__pycache__/
+*.pyc
+*.pyo
+
+# ===== OS / 编辑器 =====
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
