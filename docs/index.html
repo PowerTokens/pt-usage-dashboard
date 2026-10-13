@@ -643,7 +643,14 @@ function renderAll(){
   renderKpis();renderTrend(F);renderHourGrid(F);renderRidge(F);renderHourlyModel(F);renderDailyModel(F);
 }
 function renderBar(){
-  const el=document.getElementById("barChart");const m=DATA.models.slice(0,10);
+  const el=document.getElementById("barChart");
+  // derive from the CURRENT range + account filter (same source as KPI/table),
+  // NOT the all-span DATA.models snapshot — otherwise the chart goes stale on range switch
+  const RR=rangeRecords();
+  const byM={};
+  RR.forEach(r=>{const b=byM[r.model]||(byM[r.model]={calls:0,est:0,real:0});b.calls++;b.real+=(r.cost_real||0);});
+  const m=Object.entries(byM).map(([kk,v])=>({model:kk,calls:v.calls,est:0,real:v.real}))
+    .sort((a,b)=>(b.est+b.real)-(a.est+a.real)).slice(0,10);
   if(!m.length){el.innerHTML='<div class="empty">'+T("empty_range")+'</div>';return;}
   const W=el.clientWidth||520;
   const top=8,barH=14,gap=10,padL=10;
@@ -666,7 +673,14 @@ function renderBar(){
   m.forEach((x,i)=>{rs[i].addEventListener("mousemove",e=>showTip(e,x.model+" · "+x.calls+" "+T("times_unit")+" · "+T("legend_est")+fmt(x.est)+" "+T("legend_real")+fmt(x.real)));rs[i].addEventListener("mouseleave",hideTip);});
 }
 function renderDonut(){
-  const el=document.getElementById("donut");const md=DATA.mods;
+  const el=document.getElementById("donut");
+  // derive from the CURRENT range + account filter — stale DATA.mods made the
+  // donut ignore the time-range selector entirely
+  const RR=rangeRecords();
+  const byMod={};
+  RR.forEach(r=>{const b=byMod[r.modality]||(byMod[r.modality]={calls:0,est:0,real:0});b.calls++;b.real+=(r.cost_real||0);});
+  const md=Object.entries(byMod).map(([kk,v])=>({mod:kk,calls:v.calls,est:0,real:v.real}))
+    .sort((a,b)=>(b.est+b.real)-(a.est+a.real));
   const tot=md.reduce((a,b)=>a+b.calls,0);
   if(!tot){el.innerHTML='<div class="empty">'+T("empty_mods")+'</div>';return;}
   const W=200,R=80,C=100;let ang=-Math.PI/2;let segs="";let leg="";
@@ -703,7 +717,15 @@ function renderOff(){
 }
 function renderKeys(){
   const el=document.getElementById("keyInfo");
-  const keys=DATA.keys||[];
+  // derive from the CURRENT range + account filter — stale DATA.keys made the
+  // key table ignore the time-range selector entirely
+  const RR=rangeRecords();
+  const keyMap={};
+  RR.forEach(r=>{const kk=r.api_key||"-";const b=keyMap[kk]||(keyMap[kk]={calls:0,amount:0,models:{}});b.calls++;b.amount+=(r.cost_real||0);if(r.model)b.models[r.model]=(b.models[r.model]||0)+1;});
+  const keys=Object.entries(keyMap).map(([kk,v])=>({
+      key:kk, calls:v.calls, amount:v.amount,
+      models:Object.entries(v.models).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([mm,c])=>[mm,c])
+    })).sort((a,b)=>b.amount-a.amount);
   if(!keys.length){el.innerHTML='<div class="empty">'+T("key_empty")+'</div>';return;}
   const rows=keys.map(kk=>`<tr><td><code>${esc(kk.key)}</code></td><td style="text-align:right">${kk.calls}</td>
     <td style="text-align:right"><b>$${Number(kk.amount).toFixed(4)}</b></td>
