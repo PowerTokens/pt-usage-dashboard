@@ -16,6 +16,8 @@ h1{font-size:clamp(18px,2.4vw,24px);margin:0;letter-spacing:-.01em}
 button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:7px 14px;cursor:pointer;font-size:13px;transition:.15s;font-family:inherit}
 button:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
 button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.primary:hover{background:var(--accent);color:#fff;filter:brightness(1.06);transform:translateY(-1px)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px;margin-bottom:20px}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);transition:.15s;position:relative;overflow:hidden}
 .kpi:hover{transform:translateY(-2px);box-shadow:0 2px 6px rgba(16,24,40,.08),0 14px 30px -12px rgba(16,24,40,.18)}
@@ -49,8 +51,8 @@ svg{width:100%;height:auto;display:block}
 .tip{position:fixed;pointer-events:none;background:#1f2937;color:#fff;font-size:11px;padding:5px 9px;border-radius:7px;opacity:0;transition:opacity .1s;z-index:9}
 code{background:var(--accent-soft);color:var(--accent);padding:1px 5px;border-radius:5px;font-size:11px}
 input{font-family:inherit}
-/* ---- progress overlay (C1) ---- */
-.overlay{position:fixed;inset:0;background:rgba(244,246,251,.85);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:60}
+/* ---- progress overlay (C1, kept as fallback) ---- */
+.overlay{position:fixed;inset:0;background:rgba(244,246,251,.55);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;z-index:60}
 .overlay.on{display:flex}
 .ov-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 32px;max-width:440px;text-align:center}
 .spinner{width:38px;height:38px;border:4px solid var(--accent-soft);border-top-color:var(--accent);border-radius:50%;margin:0 auto 16px;animation:spin 1s linear infinite}
@@ -59,6 +61,23 @@ input{font-family:inherit}
 .ov-msg{margin:0;color:var(--muted);font-size:12.5px;line-height:1.6}
 .ov-bar{height:8px;background:var(--line);border-radius:6px;margin-top:16px;overflow:hidden}
 .ov-bar>i{display:block;height:100%;width:0;background:var(--accent);border-radius:6px;transition:width .3s}
+/* ---- non-blocking progress bar (C1 v2) + skeleton (C2) + error card (C3) ---- */
+.progress{display:none;align-items:center;gap:10px;margin:10px 0 0;padding:10px 12px;background:var(--accent-soft);border:1px solid var(--line);border-radius:10px}
+.progress.on{display:flex}
+.progress .pbar{flex:1;height:7px;background:var(--line);border-radius:6px;overflow:hidden}
+.progress .pbar>i{display:block;height:100%;width:0;background:var(--accent);border-radius:6px;transition:width .35s ease}
+.progress .ptext{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.skeleton{position:relative;overflow:hidden;background:linear-gradient(90deg,#e9edf3 25%,#f5f7fb 37%,#e9edf3 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:10px}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:0 0}}
+.sk-block{height:150px;margin:4px 0}
+.sk-line{height:15px;margin:9px 0;border-radius:6px}
+.kpi.sk{box-shadow:none}
+.errcard{display:none;margin:12px 0 0;padding:16px 18px;border:1px solid #fecaca;background:#fef2f2;border-radius:12px}
+.errcard.on{display:block}
+.errcard .eicon{font-size:22px;line-height:1}
+.errcard h3{margin:0 0 6px;font-size:15px;color:#b91c1c}
+.errcard p{margin:0 0 10px;font-size:12.5px;color:#7f1d1d;line-height:1.65}
+.errcard button{background:#b91c1c;color:#fff;border-color:#b91c1c}
 /* ---- help / guidance (A3+A4) ---- */
 .help{margin-top:10px;border:1px dashed var(--line);border-radius:10px;padding:8px 12px;background:var(--accent-soft)}
 .help summary{cursor:pointer;font-size:12.5px;color:var(--accent);font-weight:600;outline:none}
@@ -69,6 +88,16 @@ input{font-family:inherit}
 .guide h2{margin:0 0 8px}
 .guide p{margin:0 0 6px;font-size:13px}
 .chk{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted)}
+@media(max-width:560px){
+  body{padding:12px}
+  .wrap{max-width:100%}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+  .tokenRow{flex-direction:column;align-items:stretch}
+  .tokenRow input,.tokenRow button{width:100%}
+  .progress .ptext{font-size:10.5px;white-space:normal}
+  .ov-card{padding:22px}
+  .card{padding:14px}
+}
 </style>
 </head>
 <body data-theme="light">
@@ -86,10 +115,10 @@ input{font-family:inherit}
     <h2>🔑 Session Token (<code>_Bearer</code>)</h2>
     <span class="sub" id="tokenStatus"></span>
   </div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+  <div class="tokenRow" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
     <input id="tokenInput" type="password" placeholder="Paste your _Bearer cookie value here" style="flex:1;min-width:220px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font-size:13px">
     <label class="sub" style="display:flex;align-items:center;gap:6px">Since <input id="sinceInput" type="date" value="2025-01-01" style="padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:12px"></label>
-    <button id="loadBtn" onclick="loadData()">Load Dashboard</button>
+    <button id="loadBtn" class="primary" onclick="loadData()">Load Dashboard</button>
     <button id="demoBtn" onclick="runDemo()">Demo</button>
   </div>
   <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">
@@ -108,6 +137,9 @@ input{font-family:inherit}
     <p class="help-note">🔒 Your token is stored only in this browser's localStorage and is sent only to <code>powertokens.ai</code> — no third-party server ever sees it.</p>
   </details>
 </div>
+
+<div class="progress" id="progress"><div class="pbar"><i id="pBar"></i></div><span class="ptext" id="pText"></span></div>
+<div class="errcard" id="errcard"><div style="display:flex;gap:10px;align-items:flex-start"><div class="eicon">⚠️</div><div style="flex:1"><h3 id="errTitle"></h3><p id="errMsg"></p><button onclick="loadData()">Retry</button></div></div></div>
 
 <div class="card guide" id="guide" style="display:none">
   <h2>👋 Welcome to PowerTokens Usage Dashboard</h2>
@@ -204,7 +236,11 @@ const I18N = {
   m_50:"p50", m_90:"p90", rec_unit:"rec", times_unit:"times", hour_unit:"h",
   ridge_note:"X-axis = total tokens per request (log scale); solid = p50 median, dashed = p90. Only calls with token details counted.",
   hourgrid_note:"Each cell = calls in that hour of that day; darker = denser.",
-  src_console:"console"
+  src_console:"console",
+  err_auth:"Token invalid or expired — copy a fresh _Bearer cookie from your browser and click Retry.",
+  err_network:"Cannot reach the server (network / CORS / blocked). Check your connection and click Retry.",
+  err_timeout:"Request timed out (large data or slow network). Wait a moment and Retry, or pick a shorter date range.",
+  err_unknown:"Something went wrong: "
  },
  zh:{
   title:"PowerTokens 用量看板", toggle_theme:"切换主题", toggle_lang:"EN",
@@ -250,7 +286,11 @@ const I18N = {
   m_50:"p50", m_90:"p90", rec_unit:"笔", times_unit:"次", hour_unit:"时",
   ridge_note:"横轴 = 单次请求 token 总量（对数轴）；实线 = p50 中位数，虚线 = p90。仅统计含 token 明细的调用。",
   hourgrid_note:"每格 = 该日该小时的调用次数，颜色越深越密集。",
-  src_console:"控制台"
+  src_console:"控制台",
+  err_auth:"Token 无效或已过期，请在浏览器重新复制 _Bearer cookie 后点 Retry。",
+  err_network:"无法连接服务器（网络 / CORS / 被拦截）。请检查网络后点 Retry。",
+  err_timeout:"请求超时（数据量大或网络慢）。请稍候再点 Retry，或缩短时间范围。",
+  err_unknown:"出错了："
  }
 };
 function T(kk,p){ const d=I18N[LANG]||I18N.en; let s=(d&&d[kk]!=null)?d[kk]:(I18N.en[kk]!=null?I18N.en[kk]:kk); if(p){for(const j in p){ if(p[j]!=null) s=s.split("{"+j+"}").join(String(p[j])); } } return s; }
@@ -272,16 +312,31 @@ function balTxt(){const b=DATA.server&&DATA.server.balance;return b?"$"+Number(b
 function renderKpis(F){
  let calls=F.length,cost=0,tin=0,tout=0;const days=new Set();
  F.forEach(r=>{cost+=r[4];tin+=r[2];tout+=r[3];days.add(dayOf(r[0]));});
+ const bHas=(DATA.server&&DATA.server.balance&&DATA.server.balance.equal_usd!=null);
  let rows;
  if(RECS.length){
-  rows=[[T("kpi_cost"),fmtD(cost)],[T("kpi_calls"),calls],[T("kpi_tokens"),fmtTok(tin+tout)],
-   [T("kpi_io"),(tout?Math.round(tin/tout):0)+" : 1"],[T("kpi_active"),days.size],[T("kpi_balance"),balTxt()]];
+  rows=[
+   {l:T("kpi_cost"), to:cost, f:v=>"$"+v.toFixed(2)},
+   {l:T("kpi_calls"), to:calls, f:v=>Math.round(v).toLocaleString()},
+   {l:T("kpi_tokens"), to:tin+tout, f:v=>fmtTok(v)},
+   {l:T("kpi_io"), to:(tout?tin/tout:0), f:v=>(Math.round(v*100)/100)+" : 1"},
+   {l:T("kpi_active"), to:days.size, f:v=>String(Math.round(v))},
+   {l:T("kpi_balance"), to:bHas?balNum():0, f:v=>"$"+v.toFixed(4), text:bHas?null:"-"}
+  ];
  }else{
-  rows=[[T("kpi_cost"),fmt(k.real)+" ("+k.real_n+" "+T("rec_unit")+")"],[T("kpi_calls"),k.calls],[T("kpi_top"),k.top_model],
-   [T("kpi_est"),"$"+Number(k.est).toFixed(4)+" ("+k.est_n+" "+T("rec_unit")+")"],[T("kpi_balance"),balTxt()],
-   [T("kpi_credits"),(DATA.server&&DATA.server.balance)?DATA.server.balance.credits:"-"]];
+  rows=[
+   {l:T("kpi_cost"), text:fmt(k.real)+" ("+k.real_n+" "+T("rec_unit")+")"},
+   {l:T("kpi_calls"), to:k.calls, f:v=>Math.round(v).toLocaleString()},
+   {l:T("kpi_top"), text:k.top_model},
+   {l:T("kpi_est"), text:"$"+Number(k.est).toFixed(4)+" ("+k.est_n+" "+T("rec_unit")+")"},
+   {l:T("kpi_balance"), to:bHas?balNum():0, f:v=>"$"+v.toFixed(4), text:bHas?null:"-"},
+   {l:T("kpi_credits"), text:(DATA.server&&DATA.server.balance)?String(DATA.server.balance.credits):"-"}
+  ];
  }
- document.getElementById("kpis").innerHTML=rows.map(x=>`<div class="kpi"><div class="v">${x[1]}</div><div class="l">${x[0]}</div></div>`).join("");
+ const el=document.getElementById("kpis");
+ el.innerHTML=rows.map(x=>`<div class="kpi"><div class="v">${x.text!=null?x.text:'0'}</div><div class="l">${x.l}</div></div>`).join("");
+ const cells=el.querySelectorAll(".kpi .v");
+ rows.forEach((x,i)=>{ if(x.to!=null && cells[i]) animateNum(cells[i], x.to, x.f); });
 }
 function renderTrend(F){
  const el=document.getElementById("lineChart");
@@ -736,14 +791,40 @@ async function runPool(items, worker, conc){
 
 // ---- progress overlay (C1) ----
 function showProgress(msg, cur, total){
-  const ov=document.getElementById("overlay"); if(!ov) return;
-  ov.classList.add("on");
-  const m=document.getElementById("ovMsg"); if(m) m.innerHTML=msg;
+  const pg=document.getElementById("progress"); if(pg) pg.classList.add("on");
+  const pt=document.getElementById("pText"); if(pt) pt.textContent=msg;
+  const pb=document.getElementById("pBar");
   const pct=total>0?Math.round(100*cur/total):0;
-  const bar=document.getElementById("ovBar"); if(bar) bar.style.width=pct+"%";
-  const pc=document.getElementById("ovPct"); if(pc) pc.textContent=pct+"%";
+  if(pb) pb.style.width=pct+"%";
+  showSkeleton();
 }
-function hideProgress(){ const ov=document.getElementById("overlay"); if(ov) ov.classList.remove("on"); }
+function hideProgress(){ const pg=document.getElementById("progress"); if(pg) pg.classList.remove("on"); }
+function showSkeleton(){
+  const sk='<div class="skeleton sk-block"></div>';
+  ["lineChart","donut","barChart","hourGrid","ridge","hourlyModel","dailyModel","offInfo","keyInfo","convInfo","catalogBody"].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.innerHTML=sk;
+  });
+  const tb=document.querySelector("#tbl tbody"); if(tb) tb.innerHTML='<tr><td colspan="9"><div class="skeleton sk-block" style="height:200px"></div></td></tr>';
+  const kp=document.getElementById("kpis"); if(kp) kp.innerHTML=Array.from({length:6}).map(()=>'<div class="kpi sk"><div class="skeleton sk-line"></div><div class="skeleton sk-line" style="width:55%"></div></div>').join("");
+}
+function showError(title, msg){
+  const ec=document.getElementById("errcard"); if(!ec) return;
+  const t=document.getElementById("errTitle"); if(t) t.textContent=title;
+  const m=document.getElementById("errMsg"); if(m) m.textContent=msg;
+  ec.classList.add("on");
+}
+function hideError(){ const ec=document.getElementById("errcard"); if(ec) ec.classList.remove("on"); }
+function balNum(){ const b=DATA.server&&DATA.server.balance; return (b&&b.equal_usd!=null)?Number(b.equal_usd):0; }
+function animateNum(el, to, f, dur){
+  dur=dur||750; const start=performance.now();
+  function step(now){
+    const t=Math.min(1,(now-start)/dur);
+    const e=1-Math.pow(1-t,3);
+    el.textContent=f(to*e);
+    if(t<1) requestAnimationFrame(step); else el.textContent=f(to);
+  }
+  requestAnimationFrame(step);
+}
 function updateGuide(){ const g=document.getElementById("guide"); if(g) g.style.display=(!getToken()&&DATA.recs.length===0)?"block":"none"; }
 function hideGuide(){ const g=document.getElementById("guide"); if(g) g.style.display="none"; }
 
@@ -802,7 +883,7 @@ async function loadData(){
   const token=tokenEl.value.trim();
   if(!token){ setStatus("请输入 _Bearer token"); return; }
   saveToken(token);
-  loadBtn.disabled=true; demoBtn.disabled=true; hideGuide();
+  loadBtn.disabled=true; demoBtn.disabled=true; hideGuide(); hideError();
   try{
     const now=Math.floor(Date.now()/1000);
     const since=parseSince();
@@ -827,7 +908,12 @@ async function loadData(){
     setStatus("Done · "+raw.length+" records · balance "+balTxt2);
   }catch(err){
     hideProgress();
-    setStatus("Error: "+err.message);
+    let key="err_unknown", msg=err.message||String(err);
+    const m=(err.message||"").toLowerCase();
+    if(err.name==="AbortError" || /timeout|timed out|abort/i.test(m)){ key="err_timeout"; }
+    else if(/401|invalid|expired|token/.test(m)){ key="err_auth"; }
+    else if(err instanceof TypeError || /network|fetch|failed to fetch|cors|blocked|origin/i.test(m)){ key="err_network"; }
+    showError(T(key), msg);
     console.error(err);
   }finally{
     loadBtn.disabled=false; demoBtn.disabled=false;
