@@ -346,7 +346,7 @@ function renderTrend(F){
   d=Object.keys(m).sort().map(x=>({day:x,est:m[x].est,real:m[x].real}));
  }else d=DATA.daily;
  if(!d.length){el.innerHTML='<div class="empty">'+T("empty_day")+'</div>';return;}
- const W=520,H=200,pad=30;const max=Math.max(1,...d.map(x=>x.est+x.real));
+ const W=(el.clientWidth||520),H=200,pad=30;const max=Math.max(1,...d.map(x=>x.est+x.real));
  const sx=i=>pad+(W-2*pad)*i/(d.length-1||1);
  const sy=v=>H-pad-(H-2*pad)*v/max;
  let s1="M",s2="M";
@@ -364,7 +364,7 @@ function renderHourGrid(F){
  F.forEach(r=>{const d=dayOf(r[0]),h=hourOf(r[0]);if(!map[d])map[d]=new Array(24).fill(0);map[d][h]++;bands[h<8?0:h<12?1:h<18?2:3]++;});
  const days=Object.keys(map).sort();const n=F.length;
  const bandTxt=T("band",{a:(100*bands[0]/n).toFixed(1),b:(100*bands[1]/n).toFixed(1),c:(100*bands[2]/n).toFixed(1),d:(100*bands[3]/n).toFixed(1)});
- const W=1060,padL=78,cw=(W-padL-6)/24,ch=13,rh=15,padT=18;
+ const W=(el.clientWidth||1060),padL=78,cw=(W-padL-6)/24,ch=13,rh=15,padT=18;
  const H=padT+days.length*rh+8;
  let maxC=1;days.forEach(d=>map[d].forEach(c=>{if(c>maxC)maxC=c;}));
  let g=`<text x="${padL}" y="12" font-size="11" fill="var(--muted)">${bandTxt}</text>`;
@@ -385,7 +385,7 @@ function renderRidge(F){
  let lo=Infinity,hi=0;
  mods.forEach(m=>byM[m].forEach(v=>{if(v<lo)lo=v;if(v>hi)hi=v;}));
  lo=Math.log10(1+lo);hi=Math.log10(1+hi);
- const W=520,H=mods.length*36+34,padL=108,padR=100,padT=10;
+ const W=(el.clientWidth||520),H=mods.length*36+34,padL=108,padR=100,padT=10;
  const plotW=W-padL-padR;
  const xw=v=>padL+plotW*(Math.log10(1+v)-lo)/((hi-lo)||1);
  let g="";
@@ -416,7 +416,7 @@ function renderHourlyModel(F){
  if(!F.length||!tm.length){el.innerHTML='<div class="empty">'+T("empty_range")+'</div>';return;}
  const sums=tm.map(()=>new Array(24).fill(0));
  F.forEach(r=>{const i=tm.indexOf(r[1]);if(i>=0)sums[i][hourOf(r[0])]++;});
- const W=520,H=210,pad=26;
+ const W=(el.clientWidth||520),H=210,pad=26;
  const max=Math.max(1,...Array.from({length:24},(_,h)=>sums.reduce((a,s)=>a+s[h],0)));
  const x=h=>pad+(W-2*pad)*h/23;const y=v=>H-pad-(H-2*pad)*v/max;
  let paths="";let cum=new Array(24).fill(0);
@@ -439,7 +439,7 @@ function renderDailyModel(F){
  const days=[...new Set(F.map(r=>dayOf(r[0])))].sort();
  const sums=days.map(()=>new Array(tm.length+1).fill(0));
  F.forEach(r=>{const di=days.indexOf(dayOf(r[0]));const mi=tm.indexOf(r[1]);sums[di][mi<0?tm.length:mi]++;});
- const W=520,H=210,pad=26;
+ const W=(el.clientWidth||520),H=210,pad=26;
  const max=Math.max(1,...days.map((_,i)=>sums[i].reduce((a,b)=>a+b,0)));
  const bw=Math.max(3,(W-2*pad)/days.length*0.72);
  let g="";
@@ -475,16 +475,25 @@ function renderAll(){
  renderKpis(F);renderTrend(F);renderHourGrid(F);renderRidge(F);renderHourlyModel(F);renderDailyModel(F);
 }
 function renderBar(){
- const el=document.getElementById("barChart");const m=DATA.models.slice(0,12);
+ const el=document.getElementById("barChart");const m=DATA.models.slice(0,10);
  if(!m.length){el.innerHTML='<div class="empty">'+T("empty_range")+'</div>';return;}
- const W=520,H=Math.max(160,m.length*22+20),pad=90,barH=16;
+ const W=el.clientWidth||520;
+ const top=8,barH=14,gap=10,padL=10;
+ const labelColW=Math.min(Math.round(W*0.40),180);
+ const maxChars=Math.max(4,Math.floor((labelColW-8)/6.2));
+ const barX=padL+labelColW+8, padR=62, plotW=Math.max(40,W-barX-padR);
+ const H=top+m.length*(barH+gap)+4;
  const max=Math.max(1,...m.map(x=>x.est+x.real));
+ const ramp=["#185FA5","#378ADD","#378ADD","#85B7EB","#85B7EB","#B5D4F4","#B5D4F4","#B5D4F4","#B5D4F4","#B5D4F4"];
+ let grid="";[0,.25,.5,.75,1].forEach(t=>{const gx=barX+plotW*t;grid+=`<line x1="${gx.toFixed(1)}" y1="${top}" x2="${gx.toFixed(1)}" y2="${H-4}" stroke="var(--line)" stroke-width="1" opacity="0.55"/>`;});
  let rows="";
- m.forEach((x,i)=>{const y=10+i*(barH+4);const w=(W-pad-10)*(x.est+x.real)/max;
-   rows+=`<g><text x="${pad-6}" y="${y+barH/2+4}" text-anchor="end" font-size="11" fill="var(--ink)">${x.model}</text>
-   <rect x="${pad}" y="${y}" width="${w}" height="${barH}" rx="3" fill="var(--accent)"><title></title></rect>
-   <text x="${pad+w+4}" y="${y+barH/2+4}" font-size="10" fill="var(--muted)">${fmt(x.est+x.real)}</text></g>`;});
- el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${rows}</svg>`;
+ m.forEach((x,i)=>{const y=top+i*(barH+gap);const w=Math.max(2,plotW*(x.est+x.real)/max);const c=ramp[i]||"#B5D4F4";
+   const nm=x.model.length>maxChars?x.model.slice(0,maxChars-1)+"…":x.model;
+   rows+=`<g><text x="${barX-8}" y="${y+barH/2+4}" text-anchor="end" font-size="11" fill="var(--ink)">${esc(nm)}</text>`
+     +`<rect x="${barX}" y="${y}" width="${w.toFixed(1)}" height="${barH}" rx="4" fill="${c}"><title>${esc(x.model)} · ${x.calls} ${T("times_unit")} · ${T("legend_est")}${fmt(x.est)} ${T("legend_real")}${fmt(x.real)}</title></rect></g>`;});
+ let vals="";
+ m.forEach((x,i)=>{const y=top+i*(barH+gap);vals+=`<text x="${W-8}" y="${y+barH/2+4}" text-anchor="end" font-size="11" fill="var(--muted)">${fmt(x.est+x.real)}</text>`;});
+ el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${grid}${rows}${vals}</svg>`;
  const rs=el.querySelectorAll("rect");
  m.forEach((x,i)=>{rs[i].addEventListener("mousemove",e=>showTip(e,x.model+" · "+x.calls+" "+T("times_unit")+" · "+T("legend_est")+fmt(x.est)+" "+T("legend_real")+fmt(x.real)));rs[i].addEventListener("mouseleave",hideTip);});
 }
@@ -593,6 +602,9 @@ const tip=document.getElementById("tip");
 function showTip(e,t){tip.textContent=t;tip.style.opacity=1;tip.style.left=(e.clientX+12)+"px";tip.style.top=(e.clientY+12)+"px";}
 function hideTip(){tip.style.opacity=0;}
 (function(){const t=localStorage.getItem("ptdash_theme");if(t)document.body.setAttribute("data-theme",t);})();
+// re-render charts at real container width on resize (prevents SVG viewBox stretch / oversized fonts)
+let _rzT; window.addEventListener("resize",()=>{clearTimeout(_rzT);_rzT=setTimeout(()=>{try{renderAll();renderBar();}catch(e){}},150);});
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 renderAllPages();
 
 // ============================================================================
