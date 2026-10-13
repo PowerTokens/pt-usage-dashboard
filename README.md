@@ -15,18 +15,47 @@ Generate a **single-file offline HTML dashboard** of your (or your team's) model
 
 Data comes from PT's **private console API** (per-call exact amount / quota / token), not estimates. As long as you can log into PT in a browser and copy one Cookie, you can pull your entire account history.
 
+<p align="center">
+  <a href="https://tjj1234.github.io/pt-usage-dashboard/?utm_source=github&utm_medium=readme&utm_campaign=pt-usage-dashboard"><b>▶ Try the live web app — no install, just paste your <code>_Bearer</code> cookie</b></a>
+</p>
+
 ---
 
-## Two ways to use this repo
+## Three ways to use this repo
 
 | Usage | For | How |
 |---|---|---|
-| **① As a standalone Python tool on GitHub** | Anyone using PT (any client) | Clone → install Python → run two commands to get the HTML |
+| **🌐 Live web app (recommended)** | Anyone, zero setup | Open the link → paste `_Bearer` → done |
+| **① As a standalone Python tool** | Anyone using PT (any client) | Clone → install Python → run two commands to get the HTML |
 | **② As a WorkBuddy skill** | WorkBuddy users | Drop this folder into `~/.workbuddy/skills/`, then ask "show my PT usage" in chat |
 
-Both share the same `scripts/*.py` with identical logic. Section ① is the primary path; ② is covered at the end.
+The web app and the Python tool share the same data source and charts. The web app is the fastest path — see the **🌐 Live Web App** section below.
 
 > **The key point:** This repo is just a set of **pure standard-library Python scripts** run from a terminal. Any agent or editor that gives you a shell can run it — Trae, Cursor, VS Code, dsh, Claude Code, Codex, or even system PowerShell / bash — **no binding to WorkBuddy**. Only the "call ↔ conversation attribution" feature is WorkBuddy-specific (it reads WB local logs).
+
+---
+
+## 🌐 Live Web App (zero install) — the fastest way
+
+No Python, no clone, no terminal. Open the link, paste your `_Bearer` cookie, and it fetches your full history right in the browser.
+
+▶ **https://tjj1234.github.io/pt-usage-dashboard/?utm_source=github&utm_medium=readme&utm_campaign=pt-usage-dashboard**
+
+### How to get your `_Bearer` cookie (≈1 minute)
+
+1. Log into **https://www.powertokens.ai** in Chrome / Edge.
+2. Press **F12** → open the **Application** tab → **Cookies** → `https://www.powertokens.ai`.
+3. Find the row named **`_Bearer`**, double-click to copy its **Value**.
+4. Paste it into the box on the page, then click **Load Dashboard**.
+
+> 🔒 **Safety:** your token is stored only in your browser's `localStorage` and is sent **only** to `powertokens.ai` — no third-party server ever sees it. The dashboard calls PT's console API directly from your browser (the API is CORS-open).
+
+### FAQ
+
+- **How long does it take?** Because the browser pulls every month in parallel, a few thousand records usually finish in 10–30s. The page shows a progress bar with the exact batch count. A local cache is kept, so your **second** load is much faster (only new months are fetched).
+- **My token expired?** The `_Bearer` cookie expires when you log out / after some time. Just re-copy it from the browser and paste again.
+- **Just want a look?** Add **`?demo=1`** to the URL for a desensitized sample — no token needed.
+- **Why not a backend?** So you never have to trust a server with your token. Everything runs in your browser.
 
 ---
 

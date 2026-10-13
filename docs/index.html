@@ -49,6 +49,26 @@ svg{width:100%;height:auto;display:block}
 .tip{position:fixed;pointer-events:none;background:#1f2937;color:#fff;font-size:11px;padding:5px 9px;border-radius:7px;opacity:0;transition:opacity .1s;z-index:9}
 code{background:var(--accent-soft);color:var(--accent);padding:1px 5px;border-radius:5px;font-size:11px}
 input{font-family:inherit}
+/* ---- progress overlay (C1) ---- */
+.overlay{position:fixed;inset:0;background:rgba(244,246,251,.85);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:60}
+.overlay.on{display:flex}
+.ov-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 32px;max-width:440px;text-align:center}
+.spinner{width:38px;height:38px;border:4px solid var(--accent-soft);border-top-color:var(--accent);border-radius:50%;margin:0 auto 16px;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ov-card h3{margin:0 0 6px;font-size:16px}
+.ov-msg{margin:0;color:var(--muted);font-size:12.5px;line-height:1.6}
+.ov-bar{height:8px;background:var(--line);border-radius:6px;margin-top:16px;overflow:hidden}
+.ov-bar>i{display:block;height:100%;width:0;background:var(--accent);border-radius:6px;transition:width .3s}
+/* ---- help / guidance (A3+A4) ---- */
+.help{margin-top:10px;border:1px dashed var(--line);border-radius:10px;padding:8px 12px;background:var(--accent-soft)}
+.help summary{cursor:pointer;font-size:12.5px;color:var(--accent);font-weight:600;outline:none}
+.help-steps{margin:10px 0 6px;padding-left:20px;font-size:12.5px;line-height:1.9}
+.help-steps code{font-size:11px}
+.help-note{font-size:11.5px;color:var(--muted);margin:6px 0 2px}
+.guide{border:1px solid var(--line);border-left:4px solid var(--accent)}
+.guide h2{margin:0 0 8px}
+.guide p{margin:0 0 6px;font-size:13px}
+.chk{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted)}
 </style>
 </head>
 <body data-theme="light">
@@ -72,7 +92,27 @@ input{font-family:inherit}
     <button id="loadBtn" onclick="loadData()">Load Dashboard</button>
     <button id="demoBtn" onclick="runDemo()">Demo</button>
   </div>
-  <div class="sub" style="margin-top:8px">Get it: browser DevTools → Application → Cookies → <code>https://www.powertokens.ai</code> → <code>_Bearer</code>. Stored only in this browser (localStorage). No server sees it except powertokens.ai.</div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">
+    <label class="chk"><input type="checkbox" id="useCacheChk" checked> Use local cache (faster 2nd load)</label>
+    <label class="chk"><input type="checkbox" id="forceChk"> Force refresh (ignore cache)</label>
+  </div>
+  <details class="help">
+    <summary data-i18n="help_title">How to get your _Bearer cookie? (click to expand)</summary>
+    <ol class="help-steps">
+      <li>Open <code>https://www.powertokens.ai</code> in Chrome/Edge and log in.</li>
+      <li>Press <code>F12</code> → switch to the <b>Application</b> tab.</li>
+      <li>Left side: expand <b>Cookies</b> → <code>https://www.powertokens.ai</code>.</li>
+      <li>Find the row named <code>_Bearer</code>, double-click to copy its <b>Value</b>.</li>
+      <li>Paste it into the box above, then click <b>Load Dashboard</b>.</li>
+    </ol>
+    <p class="help-note">🔒 Your token is stored only in this browser's localStorage and is sent only to <code>powertokens.ai</code> — no third-party server ever sees it.</p>
+  </details>
+</div>
+
+<div class="card guide" id="guide" style="display:none">
+  <h2>👋 Welcome to PowerTokens Usage Dashboard</h2>
+  <p>Paste your <code>_Bearer</code> cookie above to see your real usage. Not sure how to get it? Click <b>"How to get your _Bearer cookie?"</b> above.</p>
+  <p class="sub">Want a quick look first? Click <b>Demo</b> (top-right) to load a desensitized sample.</p>
 </div>
 
 <div class="sub" id="srcInfo" style="margin:-4px 0 10px"></div>
@@ -134,6 +174,11 @@ const I18N = {
   kpi_cost:"Cost (selected range, server-exact)", kpi_calls:"Calls", kpi_tokens:"Total Tokens",
   kpi_io:"Input : Output", kpi_active:"Active Days", kpi_balance:"Account Balance",
   kpi_top:"Top Model", kpi_est:"Local Estimate", kpi_credits:"Remaining credits",
+  loading_title:"Fetching your data…",
+  loading_intro:"Fetching your PowerTokens usage…",
+  loading_probe:"Checking {n} months of history…",
+  loading_pull:"Pulling data — batch {cur} / {total}. Due to data volume & network, this may take 10–30s. Please wait.",
+  help_title:"How to get your _Bearer cookie? (click to expand)",
   empty_day:"No daily data", empty_range:"No data in this range",
   empty_tokens:"No token-detail records in this range (needs server data)", empty_mods:"No modality data",
   band:"0–8 AM {a}% · 8–12 AM {b}% · 12–18 PM {c}% · 18–24 PM {d}%",
@@ -175,6 +220,11 @@ const I18N = {
   kpi_cost:"消耗（所选范围，服务端精确）", kpi_calls:"调用次数", kpi_tokens:"总 Token",
   kpi_io:"输入 : 输出", kpi_active:"活跃天数", kpi_balance:"账户余额",
   kpi_top:"TOP 模型", kpi_est:"本地估算", kpi_credits:"剩余 credits",
+  loading_title:"正在获取你的数据…",
+  loading_intro:"正在获取你的 PowerTokens 用量…",
+  loading_probe:"正在检查 {n} 个月的历史数据…",
+  loading_pull:"正在拉取数据 — 第 {cur} / {total} 批。由于数据量与网络原因，预计需要 10~30 秒，请稍候。",
+  help_title:"如何获取 _Bearer cookie？（点击展开）",
   empty_day:"暂无按天数据", empty_range:"该范围内无数据",
   empty_tokens:"该范围内无含 token 明细的记录（需服务端数据）", empty_mods:"暂无模态数据",
   band:"凌晨0-8 {a}% · 上午8-12 {b}% · 下午12-18 {c}% · 晚18-24 {d}%",
@@ -478,8 +528,8 @@ function renderSrc(){
  document.getElementById("srcInfo").innerHTML=T("src_txt",{n:n, wb:k.wb, log:k.log})+(n?(" "+T("src_auth")):(" "+T("src_no")));
 }
 function renderAllPages(){
- document.getElementById("sub").textContent=T("sub_generated",{g:DATA.generated,n:DATA.kpi.calls});
- renderFbar();renderAccounts();renderAll();renderBar();renderDonut();renderOff();renderTable();renderKeys();renderConv();renderCatalog();renderSrc();applyI18n();
+  document.getElementById("sub").textContent=T("sub_generated",{g:DATA.generated,n:DATA.kpi.calls});
+  renderFbar();renderAccounts();renderAll();renderBar();renderDonut();renderOff();renderTable();renderKeys();renderConv();renderCatalog();renderSrc();updateGuide();applyI18n();
 }
 function toggleTheme(){const b=document.body;const n=b.getAttribute("data-theme")==="dark"?"light":"dark";b.setAttribute("data-theme",n);localStorage.setItem("ptdash_theme",n);}
 function toggleLang(){LANG=(LANG==="zh")?"en":"zh";localStorage.setItem("ptdash_lang",LANG);renderAllPages();}
@@ -668,26 +718,78 @@ async function pullWindow(s,e,tag,token,recs){
   }
   return true;
 }
+
+// ---- local incremental cache (B2) ----
+const CACHE_KEY="ptdash_cache_v1";
+function loadCache(){ try{ const c=JSON.parse(localStorage.getItem(CACHE_KEY)); return (c&&c.months)?c:{months:{}}; }catch(e){ return {months:{}}; } }
+function saveCache(c){ try{ localStorage.setItem(CACHE_KEY, JSON.stringify(c)); }catch(e){} }
+function cidOf(it){ return it.consume_id||((it.request_id||"")+String(it.consume_time)); }
+
+// ---- concurrent worker pool ----
+async function runPool(items, worker, conc){
+  conc=Math.max(1, Math.min(conc||3, items.length||1));
+  const res=new Array(items.length); let i=0;
+  async function next(){ while(i<items.length){ const idx=i++; res[idx]=await worker(items[idx], idx); } }
+  await Promise.all(Array.from({length:conc}, ()=>next()));
+  return res;
+}
+
+// ---- progress overlay (C1) ----
+function showProgress(msg, cur, total){
+  const ov=document.getElementById("overlay"); if(!ov) return;
+  ov.classList.add("on");
+  const m=document.getElementById("ovMsg"); if(m) m.innerHTML=msg;
+  const pct=total>0?Math.round(100*cur/total):0;
+  const bar=document.getElementById("ovBar"); if(bar) bar.style.width=pct+"%";
+  const pc=document.getElementById("ovPct"); if(pc) pc.textContent=pct+"%";
+}
+function hideProgress(){ const ov=document.getElementById("overlay"); if(ov) ov.classList.remove("on"); }
+function updateGuide(){ const g=document.getElementById("guide"); if(g) g.style.display=(!getToken()&&DATA.recs.length===0)?"block":"none"; }
+function hideGuide(){ const g=document.getElementById("guide"); if(g) g.style.display="none"; }
+
 async function fetchAllRecords(token, since, now){
   const months=monthBounds(since,now);
-  const active=[];
-  for(const [s,e,label] of months){
-    setStatus("Probing "+label+" …");
-    const probe=await ptPost("/usage-records/list",{start_timestamp:s,end_timestamp:e,page:1,page_size:1},token);
-    if(probe.json.code===401) throw new Error("Token 无效或已过期 (401)，请重新复制浏览器 _Bearer");
-    if(probe.json.code!==200) continue;
-    const total=(probe.json.data||{}).total||0;
-    if(total) active.push([s,e,label,total]);
+  const cache=loadCache();
+  const useCache=document.getElementById("useCacheChk") ? document.getElementById("useCacheChk").checked : true;
+  const force=document.getElementById("forceChk") ? document.getElementById("forceChk").checked : false;
+  // ---- concurrent month probes ----
+  showProgress(T("loading_probe",{n:months.length}),0,1);
+  const probed=await runPool(months, async([s,e,label])=>{
+    const p=await ptPost("/usage-records/list",{start_timestamp:s,end_timestamp:e,page:1,page_size:1},token);
+    return {label,s,e,p};
+  }, 5);
+  const active=[]; const cachedItems=[]; let hit=0;
+  for(const pr of probed){
+    if(pr.p.json.code===401) throw new Error("Token 无效或已过期 (401)，请重新复制浏览器 _Bearer");
+    if(pr.p.json.code!==200) continue;
+    const total=(pr.p.json.data||{}).total||0;
+    if(!total) continue;
+    const c=cache.months&&cache.months[pr.label];
+    if(useCache && !force && c && c.items && c.items.length>=total){ cachedItems.push(...c.items); hit++; }
+    else active.push([pr.s,pr.e,pr.label,total]);
   }
-  const recs={};
-  for(const [s,e,label,total] of active){
-    setStatus("Pulling "+label+" ("+total+" records) …");
-    const ok=await pullWindow(s,e,label,token,recs);
-    if(!ok){
-      for(const [ds,de,dl] of dayBounds(s,e)){ await pullWindow(ds,de,dl,token,recs); }
-    }
+  // ---- concurrent month pulls ----
+  const monthItems={}; let done=0; const total=active.length;
+  if(total>0){
+    await runPool(active, async([s,e,label])=>{
+      const mrecs={};
+      let ok=await pullWindow(s,e,label,token,mrecs);
+      if(!ok){ for(const [ds,de,dl] of dayBounds(s,e)){ await pullWindow(ds,de,dl,token,mrecs); } }
+      monthItems[label]=Object.values(mrecs);
+      cache.months[label]={at:nowStr(), items:monthItems[label]};
+      done++;
+      const msg=T("loading_pull",{cur:done,total:total});
+      showProgress(msg, done, total);
+      return true;
+    }, 5);
   }
-  return Object.values(recs).sort((a,b)=>(a.consume_time||0)-(b.consume_time||0));
+  saveCache({months:cache.months});
+  // ---- merge cached + freshly pulled (dedupe by consume_id) ----
+  const merged={};
+  for(const it of cachedItems){ merged[cidOf(it)]=it; }
+  for(const label in monthItems){ for(const it of monthItems[label]){ merged[cidOf(it)]=it; } }
+  if(hit>0) setStatus(hit+" month(s) reused from cache, "+total+" fetched fresh");
+  return Object.values(merged).sort((a,b)=>(a.consume_time||0)-(b.consume_time||0));
 }
 
 function parseSince(){
@@ -700,16 +802,21 @@ async function loadData(){
   const token=tokenEl.value.trim();
   if(!token){ setStatus("请输入 _Bearer token"); return; }
   saveToken(token);
-  loadBtn.disabled=true; demoBtn.disabled=true;
+  loadBtn.disabled=true; demoBtn.disabled=true; hideGuide();
   try{
     const now=Math.floor(Date.now()/1000);
     const since=parseSince();
-    setStatus("Fetching usage records …");
+    showProgress(T("loading_intro"),0,1);
     const raw=await fetchAllRecords(token, since, now);
+    hideProgress();
     setStatus("Fetched "+raw.length+" records. Loading balance & stats …");
-    const bal=await ptPost("/bill/balance",{},token);
-    const usage=await ptPost("/dashboard/usage",{start_timestamp:since,end_timestamp:now},token);
-    const rank=await ptPost("/dashboard/model-consume-rank",{start_timestamp:since,end_timestamp:now},token);
+    showProgress("Loading balance & stats …",1,2);
+    const [bal,usage,rank]=await Promise.all([
+      ptPost("/bill/balance",{},token),
+      ptPost("/dashboard/usage",{start_timestamp:since,end_timestamp:now},token),
+      ptPost("/dashboard/model-consume-rank",{start_timestamp:since,end_timestamp:now},token)
+    ]);
+    hideProgress();
     const recs=raw.map(normalize);
     const data=buildData(recs,
       (bal.json.code===200?bal.json.data:null),
@@ -719,6 +826,7 @@ async function loadData(){
     const balTxt2=(bal.json.data&&bal.json.data.equal_usd!=null)?("$"+Number(bal.json.data.equal_usd).toFixed(4)):"-";
     setStatus("Done · "+raw.length+" records · balance "+balTxt2);
   }catch(err){
+    hideProgress();
     setStatus("Error: "+err.message);
     console.error(err);
   }finally{
@@ -764,5 +872,14 @@ function runDemo(){ setData(buildDemo()); setStatus("Demo data loaded (sample, n
   if(new URLSearchParams(location.search).get("demo")==="1"){ runDemo(); }
 })();
 </script>
+<div class="overlay" id="overlay">
+  <div class="ov-card">
+    <div class="spinner"></div>
+    <h3 data-i18n="loading_title">Fetching your data…</h3>
+    <p class="ov-msg" id="ovMsg"></p>
+    <div class="ov-bar"><i id="ovBar"></i></div>
+    <p class="ov-msg" id="ovPct" style="margin-top:8px"></p>
+  </div>
+</div>
 </body>
 </html>
