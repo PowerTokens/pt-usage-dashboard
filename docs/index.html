@@ -5,98 +5,138 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PowerTokens Usage Dashboard</title>
 <style>
-:root{--bg:#f4f6fb;--card:#ffffff;--ink:#1f2937;--muted:#7b8494;--line:#e8ecf3;--accent:#4f7cff;--accent-soft:#eef3ff;--est:#4f7cff;--real:#22c55e;--vid:#7c8cff;--img:#f472b6;--aud:#fbbf24;--chat:#34d399;--other:#aab2c0;--shadow:0 1px 3px rgba(16,24,40,.06),0 8px 22px -10px rgba(16,24,40,.12);--radius:16px}
-[data-theme=dark]{--bg:#0e1320;--card:#161c2c;--ink:#e7ecf5;--muted:#9aa6bd;--line:#26304a;--accent:#6b93ff;--accent-soft:#1b2740;--est:#6b93ff;--real:#4ade80;--shadow:0 1px 3px rgba(0,0,0,.3),0 10px 26px -12px rgba(0,0,0,.5)}
+:root{
+  --bg:#F1F2F4;--card:#FFFFFF;--surface:#F7F8FA;
+  --ink:#16181D;--muted:#5F6570;--hint:#8A9099;
+  --line:rgba(16,24,40,.10);--line2:rgba(16,24,40,.20);--line3:rgba(16,24,40,.32);
+  --accent:#185FA5;--accent-soft:#E6F1FB;--accent-line:#B5D4F4;
+  --est:#378ADD;--real:#1D9E75;--vid:#7F77DD;--img:#D4537E;--aud:#EF9F27;--chat:#1D9E75;--other:#B4B2A9;
+  --pos:#3B6D11;--neg:#A32D2D;--warn:#854F0B;
+  --info-bg:#E6F1FB;--info-ink:#185FA5;--danger-bg:#FCEBEB;--danger-ink:#A32D2D;--success-bg:#E1F5EE;--success-ink:#0F6E56;--amber-bg:#FAEEDA;--amber-ink:#854F0B;
+  --r-sm:8px;--r-md:8px;--r-lg:12px;
+  --ff:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;
+}
+[data-theme=dark]{
+  --bg:#0E1116;--card:#161A20;--surface:#1C2128;
+  --ink:#E6E9EF;--muted:#98A1B0;--hint:#6C7480;
+  --line:rgba(255,255,255,.10);--line2:rgba(255,255,255,.20);--line3:rgba(255,255,255,.32);
+  --accent:#85B7EB;--accent-soft:#12233A;--accent-line:#2C4A6E;
+  --est:#85B7EB;--real:#5DCAA5;--vid:#AFA9EC;--img:#ED93B1;--aud:#FAC775;--chat:#5DCAA5;--other:#5F6672;
+  --pos:#97C459;--neg:#F09595;--warn:#EF9F27;
+  --info-bg:#12233A;--info-ink:#B5D4F4;--danger-bg:#2A1518;--danger-ink:#F7C1C1;--success-bg:#0C2A22;--success-ink:#9FE1CB;--amber-bg:#2A1F0C;--amber-ink:#FAC775;
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);padding:clamp(14px,3vw,28px);line-height:1.55;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1200px;margin:0 auto}
-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px}
-h1{font-size:clamp(18px,2.4vw,24px);margin:0;letter-spacing:-.01em}
-.sub{color:var(--muted);font-size:12.5px}
-button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:7px 14px;cursor:pointer;font-size:13px;transition:.15s;font-family:inherit}
-button:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
-button:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
-.primary:hover{background:var(--accent);color:#fff;filter:brightness(1.06);transform:translateY(-1px)}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px;margin-bottom:20px}
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);transition:.15s;position:relative;overflow:hidden}
-.kpi:hover{transform:translateY(-2px);box-shadow:0 2px 6px rgba(16,24,40,.08),0 14px 30px -12px rgba(16,24,40,.18)}
-.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
-.kpi .v{font-size:clamp(18px,2vw,24px);font-weight:750;letter-spacing:-.02em;line-height:1.1}
-.kpi .l{font-size:12px;color:var(--muted);margin-top:6px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:780px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);transition:.15s}
-.card:hover{box-shadow:0 2px 6px rgba(16,24,40,.06),0 16px 34px -14px rgba(16,24,40,.18)}
-.card h2{font-size:14.5px;margin:0 0 12px;font-weight:650}
-.card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+body{margin:0;font-family:var(--ff);background:var(--bg);color:var(--ink);padding:clamp(16px,3vw,32px);font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:1.5rem}
+h1{font-size:20px;font-weight:500;margin:0;letter-spacing:-.01em;line-height:1.3}
+h2{font-size:14px;font-weight:500;margin:0}
+h3{font-size:13px;font-weight:500;margin:0}
+.sub{color:var(--muted);font-size:12px;line-height:1.6}
+.hint{color:var(--hint);font-size:11px;line-height:1.6}
+.mt{margin-top:12px}.mt-lg{margin-top:1.5rem}.mt-sm{margin-top:8px}
+
+button,.inp{font-family:inherit;font-size:12px}
+button{background:transparent;color:var(--muted);border:.5px solid var(--line2);border-radius:var(--r-sm);padding:6px 12px;cursor:pointer;line-height:1.5;transition:background .12s,border-color .12s,color .12s}
+button:hover{border-color:var(--line3);color:var(--ink);background:var(--surface)}
+button:active{background:var(--surface)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.primary{background:var(--accent);color:#FFFFFF;border-color:transparent}
+.primary:hover{background:var(--accent);color:#FFFFFF;opacity:.9}
+.mini{padding:4px 10px;font-size:11px}
+.inp{background:var(--card);color:var(--ink);border:.5px solid var(--line2);border-radius:var(--r-sm);padding:7px 10px;font-size:13px;line-height:1.4}
+.inp:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+input[type=date].inp{padding:5px 8px;font-size:12px}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px}
+.kpi{background:var(--card);border:.5px solid var(--line);border-radius:var(--r-md);padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.kpi .l{font-size:12px;color:var(--muted);line-height:1.4}
+.kpi .v{font-size:24px;font-weight:500;letter-spacing:-.02em;line-height:1.25;font-variant-numeric:tabular-nums}
+.kpi .delta{font-size:11px;line-height:1.5;font-variant-numeric:tabular-nums}
+.kpi .delta .dabs{color:var(--hint);margin-left:4px}
+.delta.up{color:var(--pos)}.delta.down{color:var(--neg)}.delta.none{color:var(--hint)}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media(max-width:780px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:.5px solid var(--line);border-radius:var(--r-lg);padding:16px 20px}
+.card h2{margin:0 0 12px}
+.card-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px}
 .card-h h2{margin:0}
-.mini{font-size:11px;padding:4px 11px;border-radius:8px}
+
 .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
-table{width:100%;border-collapse:collapse;font-size:12.5px}
-th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
-th{color:var(--muted);font-weight:600;position:sticky;top:0;background:var(--card);font-size:11px;text-transform:uppercase;letter-spacing:.03em}
-tbody tr:nth-child(even){background:rgba(79,124,255,.045)}
-tbody tr:hover{background:var(--accent-soft);transition:background .1s}
-.scroll{max-height:380px;overflow:auto;border-radius:10px;border:1px solid var(--line)}
-.tag{padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500}
-.t-succ{background:#dcfce7;color:#15803d}.t-fail{background:#fee2e2;color:#b91c1c}.t-unk{background:#eef2f7;color:#475569}
-.t-wb{background:#e0e7ff;color:#3730a3}.t-log{background:#fef3c7;color:#92400e}.t-srv{background:#dbeafe;color:#1e40af}
-.empty{color:var(--muted);font-size:13px;padding:24px;text-align:center}
-.fbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.fb{border-radius:20px;padding:6px 14px}
-.fb.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 10px -3px rgba(79,124,255,.5)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px 12px;border-bottom:.5px solid var(--line);white-space:nowrap}
+th{color:var(--muted);font-weight:500;font-size:12px;position:sticky;top:0;background:var(--card);z-index:1}
+tbody tr:nth-child(even){background:var(--surface)}
+tbody tr:hover{background:var(--accent-soft)}
+.scroll{max-height:420px;overflow:auto;border-radius:var(--r-sm);border:.5px solid var(--line)}
+.tag{padding:1px 8px;border-radius:999px;font-size:11px;line-height:1.6}
+.t-succ{background:var(--success-bg);color:var(--success-ink)}.t-fail{background:var(--danger-bg);color:var(--danger-ink)}.t-unk{background:var(--surface);color:var(--muted)}
+.t-wb{background:var(--info-bg);color:var(--info-ink)}.t-log{background:var(--amber-bg);color:var(--amber-ink)}.t-srv{background:var(--accent-soft);color:var(--accent)}
+.empty{color:var(--hint);font-size:12px;padding:32px 16px;text-align:center}
+.fbar{display:flex;gap:6px;flex-wrap:wrap}
+#accbar{margin-top:10px}
+#kpis{margin-top:12px}
+.fb{border-radius:var(--r-sm);padding:4px 12px}
+.fb.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-line)}
 svg{width:100%;height:auto;display:block}
-.tip{position:fixed;pointer-events:none;background:#1f2937;color:#fff;font-size:11px;padding:5px 9px;border-radius:7px;opacity:0;transition:opacity .1s;z-index:9}
-code{background:var(--accent-soft);color:var(--accent);padding:1px 5px;border-radius:5px;font-size:11px}
-input{font-family:inherit}
-/* ---- progress overlay (C1, kept as fallback) ---- */
-.overlay{position:fixed;inset:0;background:rgba(244,246,251,.55);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;z-index:60}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:11px;padding:4px 8px;border-radius:6px;opacity:0;transition:opacity .1s;z-index:9}
+code{background:var(--surface);color:var(--accent);padding:1px 5px;border-radius:4px;font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+.overlay{position:fixed;inset:0;background:rgba(16,24,40,.28);display:none;align-items:center;justify-content:center;z-index:60}
 .overlay.on{display:flex}
-.ov-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 32px;max-width:440px;text-align:center}
-.spinner{width:38px;height:38px;border:4px solid var(--accent-soft);border-top-color:var(--accent);border-radius:50%;margin:0 auto 16px;animation:spin 1s linear infinite}
+.ov-card{background:var(--card);border:.5px solid var(--line);border-radius:var(--r-lg);padding:24px 28px;max-width:420px;text-align:center}
+.spinner{width:28px;height:28px;border:2px solid var(--line2);border-top-color:var(--accent);border-radius:50%;margin:0 auto 16px;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.ov-card h3{margin:0 0 6px;font-size:16px}
-.ov-msg{margin:0;color:var(--muted);font-size:12.5px;line-height:1.6}
-.ov-bar{height:8px;background:var(--line);border-radius:6px;margin-top:16px;overflow:hidden}
-.ov-bar>i{display:block;height:100%;width:0;background:var(--accent);border-radius:6px;transition:width .3s}
-/* ---- non-blocking progress bar (C1 v2) + skeleton (C2) + error card (C3) ---- */
-.progress{display:none;align-items:center;gap:10px;margin:10px 0 0;padding:10px 12px;background:var(--accent-soft);border:1px solid var(--line);border-radius:10px}
+.ov-msg{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+.ov-bar{height:4px;background:var(--surface);border-radius:999px;margin-top:16px;overflow:hidden}
+.ov-bar>i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .3s}
+.progress{display:none;align-items:center;gap:12px;margin-top:12px;padding:10px 16px;background:var(--card);border:.5px solid var(--line);border-radius:var(--r-lg)}
 .progress.on{display:flex}
-.progress .pbar{flex:1;height:7px;background:var(--line);border-radius:6px;overflow:hidden}
-.progress .pbar>i{display:block;height:100%;width:0;background:var(--accent);border-radius:6px;transition:width .35s ease}
-.progress .ptext{font-size:11.5px;color:var(--muted);white-space:nowrap}
-.skeleton{position:relative;overflow:hidden;background:linear-gradient(90deg,#e9edf3 25%,#f5f7fb 37%,#e9edf3 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:10px}
-@keyframes shimmer{0%{background-position:100% 0}100%{background-position:0 0}}
-.sk-block{height:150px;margin:4px 0}
-.sk-line{height:15px;margin:9px 0;border-radius:6px}
-.kpi.sk{box-shadow:none}
-.errcard{display:none;margin:12px 0 0;padding:16px 18px;border:1px solid #fecaca;background:#fef2f2;border-radius:12px}
+.progress .pbar{flex:1;height:4px;background:var(--surface);border-radius:999px;overflow:hidden}
+.progress .pbar>i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .35s ease}
+.progress .ptext{font-size:11px;color:var(--muted);white-space:nowrap}
+.skeleton{background:var(--surface);border-radius:var(--r-sm);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.sk-block{height:140px}
+.sk-line{height:14px;margin:8px 0}
+.kpi.sk{justify-content:center}
+.errcard{display:none;margin-top:12px;padding:14px 16px;border:.5px solid var(--line2);background:var(--danger-bg);border-radius:var(--r-lg)}
 .errcard.on{display:block}
-.errcard .eicon{font-size:22px;line-height:1}
-.errcard h3{margin:0 0 6px;font-size:15px;color:#b91c1c}
-.errcard p{margin:0 0 10px;font-size:12.5px;color:#7f1d1d;line-height:1.65}
-.errcard button{background:#b91c1c;color:#fff;border-color:#b91c1c}
-/* ---- help / guidance (A3+A4) ---- */
-.help{margin-top:10px;border:1px dashed var(--line);border-radius:10px;padding:8px 12px;background:var(--accent-soft)}
-.help summary{cursor:pointer;font-size:12.5px;color:var(--accent);font-weight:600;outline:none}
-.help-steps{margin:10px 0 6px;padding-left:20px;font-size:12.5px;line-height:1.9}
-.help-steps code{font-size:11px}
-.help-note{font-size:11.5px;color:var(--muted);margin:6px 0 2px}
-.guide{border:1px solid var(--line);border-left:4px solid var(--accent)}
-.guide h2{margin:0 0 8px}
-.guide p{margin:0 0 6px;font-size:13px}
-.chk{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted)}
+.errcard .eicon{width:16px;height:16px;border-radius:50%;background:var(--danger-ink);color:var(--danger-bg);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex:none;margin-top:2px}
+.errcard p{margin:4px 0 0;font-size:12px;color:var(--muted);line-height:1.6}
+.errcard button{background:var(--danger-ink);color:var(--danger-bg);border-color:transparent}
+.errcard button:hover{background:var(--danger-ink);color:var(--danger-bg);opacity:.9}
+.help{margin-top:12px;border-radius:var(--r-sm);background:var(--surface);padding:8px 12px}
+.help summary{cursor:pointer;font-size:12px;color:var(--accent);font-weight:500;outline:none}
+.help-steps{margin:8px 0;padding-left:20px;font-size:12px;line-height:1.8;color:var(--muted)}
+.help-note{font-size:11px;color:var(--hint);margin:8px 0 2px}
+.guide{border-left:2px solid var(--accent)}
+.guide p{margin:0 0 6px;font-size:13px;color:var(--muted)}
+.chk{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+
+.nav{display:flex;gap:4px;flex-wrap:wrap;margin-top:1.5rem;padding-bottom:10px;border-bottom:.5px solid var(--line)}
+.tab{border:.5px solid transparent;padding:5px 12px;border-radius:var(--r-sm);color:var(--muted);font-size:12px}
+.tab:hover{background:var(--surface);color:var(--ink)}
+.tab.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-line)}
+.tab.lock{color:var(--hint)}
+.rangebar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:12px;padding:12px 16px;background:var(--card);border:.5px solid var(--line);border-radius:var(--r-lg)}
+.rangebar .lbl{font-size:12px;color:var(--muted)}
+.sec{display:none;padding-top:1.5rem}
+.sec.on{display:block}
+.locked{border:.5px dashed var(--line2);border-radius:var(--r-lg);padding:40px 24px;text-align:center;background:var(--card)}
+.locked p{font-size:13px;line-height:1.7;margin:8px auto 0;max-width:520px;color:var(--muted)}
+.locked .pill{display:inline-block;margin-top:16px;padding:4px 12px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:11px}
 @media(max-width:560px){
   body{padding:12px}
-  .wrap{max-width:100%}
-  .kpis{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
   .tokenRow{flex-direction:column;align-items:stretch}
-  .tokenRow input,.tokenRow button{width:100%}
-  .progress .ptext{font-size:10.5px;white-space:normal}
-  .ov-card{padding:22px}
-  .card{padding:14px}
+  .tokenRow .inp,.tokenRow button{width:100%}
+  .progress .ptext{font-size:11px;white-space:normal}
+  .ov-card{padding:20px}
+  .card{padding:14px 16px}
 }
 </style>
 </head>
@@ -112,16 +152,16 @@ input{font-family:inherit}
 
 <div class="card" id="tokenPanel">
   <div class="card-h">
-    <h2>🔑 Session Token (<code>_Bearer</code>)</h2>
+    <h2>Session token (<code>_Bearer</code>)</h2>
     <span class="sub" id="tokenStatus"></span>
   </div>
   <div class="tokenRow" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-    <input id="tokenInput" type="password" placeholder="Paste your _Bearer cookie value here" style="flex:1;min-width:220px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font-size:13px">
-    <label class="sub" style="display:flex;align-items:center;gap:6px">Since <input id="sinceInput" type="date" value="2025-01-01" style="padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:12px"></label>
-    <button id="loadBtn" class="primary" onclick="loadData()">Load Dashboard</button>
+    <input id="tokenInput" class="inp" type="password" placeholder="Paste your _Bearer cookie value here" style="flex:1;min-width:220px">
+    <label class="sub" style="display:flex;align-items:center;gap:6px">Since <input id="sinceInput" class="inp" type="date" value="2025-01-01"></label>
+    <button id="loadBtn" class="primary" onclick="loadData()">Load dashboard</button>
     <button id="demoBtn" onclick="runDemo()">Demo</button>
   </div>
-  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">
+  <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:12px">
     <label class="chk"><input type="checkbox" id="useCacheChk" checked> Use local cache (faster 2nd load)</label>
     <label class="chk"><input type="checkbox" id="forceChk"> Force refresh (ignore cache)</label>
   </div>
@@ -132,43 +172,106 @@ input{font-family:inherit}
       <li>Press <code>F12</code> → switch to the <b>Application</b> tab.</li>
       <li>Left side: expand <b>Cookies</b> → <code>https://www.powertokens.ai</code>.</li>
       <li>Find the row named <code>_Bearer</code>, double-click to copy its <b>Value</b>.</li>
-      <li>Paste it into the box above, then click <b>Load Dashboard</b>.</li>
+      <li>Paste it into the box above, then click <b>Load dashboard</b>.</li>
     </ol>
-    <p class="help-note">🔒 Your token is stored only in this browser's localStorage and is sent only to <code>powertokens.ai</code> — no third-party server ever sees it.</p>
+    <p class="help-note">Your token is stored only in this browser's localStorage and is sent only to <code>powertokens.ai</code> — no third-party server ever sees it.</p>
   </details>
 </div>
 
+<div class="rangebar" id="rangebar">
+  <span class="lbl" data-i18n="range_lbl">Range:</span>
+  <span class="fbar" id="fbar"></span>
+  <span id="customRange" style="display:flex;gap:8px;align-items:center">
+    <input type="date" id="cStart" class="inp">
+    <span style="color:var(--hint);font-size:12px">→</span>
+    <input type="date" id="cEnd" class="inp">
+    <button class="mini" id="cApply" onclick="applyCustom()" data-i18n="apply">Apply</button>
+    <button class="mini" id="cClear" onclick="clearCustom()" data-i18n="clear">Clear</button>
+  </span>
+  <span style="flex:1"></span>
+  <button class="mini" id="refreshBtn" onclick="loadData()">Refresh</button>
+  <button class="mini" id="exportBtn" onclick="exportCSV()" data-i18n="export_csv">Export CSV</button>
+</div>
+
+<nav class="nav" id="nav">
+  <button class="tab active" data-tab="overview" data-i18n="tab_overview">总览</button>
+  <button class="tab" data-tab="detail" data-i18n="tab_detail">调用明细</button>
+  <button class="tab" data-tab="model" data-i18n="tab_model">模型分析</button>
+  <button class="tab lock" data-tab="attr" title="此功能在混合版 skill 中可用" data-i18n="tab_attr">归因 (hybrid)</button>
+  <button class="tab" data-tab="settings" data-i18n="tab_settings">设置</button>
+</nav>
+
 <div class="progress" id="progress"><div class="pbar"><i id="pBar"></i></div><span class="ptext" id="pText"></span></div>
-<div class="errcard" id="errcard"><div style="display:flex;gap:10px;align-items:flex-start"><div class="eicon">⚠️</div><div style="flex:1"><h3 id="errTitle"></h3><p id="errMsg"></p><button onclick="loadData()">Retry</button></div></div></div>
+<div class="errcard" id="errcard"><div style="display:flex;gap:10px;align-items:flex-start"><div class="eicon">!</div><div style="flex:1"><h3 id="errTitle"></h3><p id="errMsg"></p><div class="mt-sm"><button class="mini" onclick="loadData()">Retry</button></div></div></div></div>
 
 <div class="card guide" id="guide" style="display:none">
-  <h2>👋 Welcome to PowerTokens Usage Dashboard</h2>
+  <h2>Welcome to PowerTokens Usage Dashboard</h2>
   <p>Paste your <code>_Bearer</code> cookie above to see your real usage. Not sure how to get it? Click <b>"How to get your _Bearer cookie?"</b> above.</p>
   <p class="sub">Want a quick look first? Click <b>Demo</b> (top-right) to load a desensitized sample.</p>
 </div>
 
-<div class="sub" id="srcInfo" style="margin:-4px 0 10px"></div>
-<div class="fbar" id="fbar"></div>
-<div class="fbar" id="accbar"></div>
-<div class="kpis" id="kpis"></div>
-<div class="grid">
-  <div class="card"><h2 data-i18n="trend_title">Cost Trend</h2><div id="lineChart"></div><div class="legend"><span><i style="background:var(--est)"></i><span data-i18n="legend_est">Estimated</span></span><span><i style="background:var(--real)"></i><span data-i18n="legend_real">Actual</span></span></div></div>
-  <div class="card"><h2 data-i18n="donut_title">Modality</h2><div id="donut"></div></div>
-  <div class="card" style="grid-column:1/-1"><h2 data-i18n="bar_title">By Model</h2><div id="barChart"></div></div>
-</div>
-<div class="card" style="margin-top:14px"><h2 data-i18n="hourgrid_title">Daily Activity</h2><div id="hourGrid"></div></div>
-<div class="grid" style="margin-top:14px">
-  <div class="card"><h2 data-i18n="ridge_title">Token Distribution</h2><div id="ridge"></div></div>
-  <div class="card"><h2 data-i18n="hourly_title">Hourly by Model</h2><div id="hourlyModel"></div></div>
-</div>
-<div class="card" style="margin-top:14px"><h2 data-i18n="dailymodel_title">Daily Model Ratio</h2><div id="dailyModel"></div></div>
-<div class="card" style="margin-top:14px"><h2 data-i18n="off_title">Official Stats</h2><div id="offInfo"></div></div>
-<div class="card" style="margin-top:14px"><h2 data-i18n="key_title">By API Key</h2><div id="keyInfo"></div></div>
-<div class="card" style="margin-top:14px"><h2 data-i18n="conv_title">Attribution</h2><div id="convInfo"></div></div>
-<div class="card" style="margin-top:14px"><div class="card-h"><h2 data-i18n="tbl_title">Call Details</h2><div style="display:flex;align-items:center;gap:10px"><span class="sub" id="tblCount"></span><button id="tblToggle" class="mini" onclick="__tblAll=!__tblAll;localStorage.setItem('ptdash_tbl_all',__tblAll?'1':'0');renderTable()" style="display:none"></button></div></div><div class="scroll"><table id="tbl"><thead><tr><th data-i18n="th_time">Time</th><th data-i18n="th_model">Model</th><th data-i18n="th_mod">Modality</th><th data-i18n="th_sec">Sec</th><th data-i18n="th_res">Res</th><th data-i18n="th_status">Status</th><th data-i18n="th_est">Est $</th><th data-i18n="th_real">Real $</th><th data-i18n="th_src">Source</th></tr></thead><tbody></tbody></table></div></div>
-<div class="card" style="margin-top:14px" id="catalogCard"><h2 data-i18n="catalog_title">Catalog</h2><div id="catalogBody"></div></div>
-</div>
+<!-- ================= OVERVIEW ================= -->
+<section class="sec on" id="sec-overview">
+  <div class="sub" id="srcInfo"></div>
+  <div class="fbar" id="accbar"></div>
+  <div class="kpis" id="kpis"></div>
+  <div class="grid mt">
+    <div class="card"><h2 data-i18n="trend_title">Cost Trend</h2><div id="lineChart"></div><div class="legend"><span><i style="background:var(--est)"></i><span data-i18n="legend_est">Estimated</span></span><span><i style="background:var(--real)"></i><span data-i18n="legend_real">Actual</span></span></div></div>
+    <div class="card"><h2 data-i18n="donut_title">Modality</h2><div id="donut"></div></div>
+    <div class="card" style="grid-column:1/-1"><h2 data-i18n="bar_title">By Model</h2><div id="barChart"></div></div>
+  </div>
+  <div class="card mt"><h2 data-i18n="off_title">Official stats</h2><div id="offInfo"></div></div>
+  <div class="card mt"><h2 data-i18n="key_title">By API key</h2><div id="keyInfo"></div></div>
+</section>
+
+<!-- ================= DETAIL ================= -->
+<section class="sec" id="sec-detail">
+  <div class="card">
+    <div class="card-h">
+      <h2 data-i18n="tbl_title">Call Details</h2>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="sub" id="tblCount"></span>
+        <button id="tblToggle" class="mini" onclick="__tblAll=!__tblAll;localStorage.setItem('ptdash_tbl_all',__tblAll?'1':'0');renderTable()" style="display:none"></button>
+      </div>
+    </div>
+    <div class="scroll"><table id="tbl"><thead><tr><th data-i18n="th_time">Time</th><th data-i18n="th_model">Model</th><th data-i18n="th_mod">Modality</th><th data-i18n="th_sec">Sec</th><th data-i18n="th_res">Res</th><th data-i18n="th_status">Status</th><th data-i18n="th_est">Est $</th><th data-i18n="th_real">Real $</th><th data-i18n="th_src">Source</th></tr></thead><tbody></tbody></table></div>
+  </div>
+</section>
+
+<!-- ================= MODEL ================= -->
+<section class="sec" id="sec-model">
+  <div class="card"><h2 data-i18n="hourgrid_title">Daily activity</h2><div id="hourGrid"></div></div>
+  <div class="grid mt">
+    <div class="card"><h2 data-i18n="ridge_title">Token distribution</h2><div id="ridge"></div></div>
+    <div class="card"><h2 data-i18n="hourly_title">Hourly by model</h2><div id="hourlyModel"></div></div>
+  </div>
+  <div class="card mt"><h2 data-i18n="dailymodel_title">Daily model ratio</h2><div id="dailyModel"></div></div>
+</section>
+
+<!-- ================= ATTRIBUTION (locked in online) ================= -->
+<section class="sec" id="sec-attr">
+  <div class="card"><h2 data-i18n="conv_title">Attribution</h2><div id="attrInfo"></div></div>
+</section>
+
+<!-- ================= SETTINGS ================= -->
+<section class="sec" id="sec-settings">
+  <div class="card">
+    <h2 data-i18n="tab_settings">Settings</h2>
+    <div style="display:flex;flex-direction:column;gap:14px;font-size:13px;line-height:1.7">
+      <div><b data-i18n="set_lang">Language / theme</b><br><span class="sub">Use the buttons in the top-right corner to switch 中文/EN and light/dark.</span></div>
+      <div><b data-i18n="set_fetch">Fetch window (Since)</b><br><span class="sub" id="setSinceTxt"></span></div>
+      <div><b data-i18n="set_cache">Local cache</b><br><span class="sub" id="setCacheTxt"></span></div>
+      <div><b data-i18n="set_privacy">Privacy</b><br><span class="sub">Token stays in your browser localStorage; data is fetched straight from powertokens.ai. No backend.</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="clearCache()" data-i18n="set_clear">Clear cache & token</button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div class="tip" id="tip"></div>
+
+<!-- ============================================================================ -->
 <script>
 // ============================================================================
 //  PowerTokens Usage Dashboard — pure static web app (no backend).
@@ -183,10 +286,15 @@ let DATA = {
   catalog:null, price_keys:[],
   server:{fetched_at:null,balance:null,dashboard:null,rank:null},
   recs:[], accounts:[], server_n:0,
-  conv:{stat:null,totals:null,keys:[],sessions:[],cwd:[],generated:null}
+  conv:{stat:null,totals:null,keys:[],sessions:[],cwd:[],generated:null},
+  records:[], keys:[]
 };
 let RECS = DATA.recs || [];
 let k = DATA.kpi;
+let activeDays = 0;
+let activeAccount = "__all__";
+let customActive = false, customStart = "", customEnd = "";
+let currentTab = "overview";
 
 let LANG = (localStorage.getItem("ptdash_lang") || "en");
 let __tblAll = (localStorage.getItem("ptdash_tbl_all") === "1");
@@ -194,16 +302,16 @@ const I18N = {
  en:{
   title:"PowerTokens Usage Dashboard", toggle_theme:"Theme", toggle_lang:"中文",
   sub_generated:"Generated {g} · {n} calls",
-  trend_title:"Cost Trend (by day)", legend_est:"Estimated", legend_real:"Actual",
-  donut_title:"Modality Breakdown", bar_title:"Cost by Model (Top)", src_title:"Data Sources",
-  hourgrid_title:"Daily Activity (hour × date)",
-  ridge_title:"Token Size Distribution per Request (by model, 50%/90% pct)",
-  hourly_title:"0–24h Distribution · by Model",
-  dailymodel_title:"Daily Model Usage Ratio (stacked calls)",
-  off_title:"PT Console Official Stats (server)", key_title:"Cost by API Key (full)",
-  conv_title:"Call ↔ Conversation Attribution", tbl_title:"Call Details", tbl_show_all:"Show all {n} records", tbl_show_less:"Show less", tbl_showing:"Showing {a} of {b}", tbl_showing_all:"All {n} records",
-  catalog_title:"PT Model Catalog (pt_models.json, optional)",
-  kpi_cost:"Cost (selected range, server-exact)", kpi_calls:"Calls", kpi_tokens:"Total Tokens",
+  trend_title:"Cost trend (by day)", legend_est:"Estimated", legend_real:"Actual",
+  donut_title:"Modality", bar_title:"Cost by model (top)",
+  hourgrid_title:"Daily activity (hour × date)",
+  ridge_title:"Token size per request (by model, 50%/90%)",
+  hourly_title:"Hourly distribution by model",
+  dailymodel_title:"Daily model usage ratio (stacked calls)",
+  off_title:"Official stats (server)", key_title:"Cost by API key",
+  conv_title:"Call ↔ conversation attribution", tbl_title:"Call details",
+  tbl_show_all:"Show all {n} records", tbl_show_less:"Show less", tbl_showing:"Showing {a} of {b}", tbl_showing_all:"All {n} records",
+  kpi_cost:"Cost (range, server-exact)", kpi_calls:"Calls", kpi_tokens:"Total Tokens",
   kpi_io:"Input : Output", kpi_active:"Active Days", kpi_balance:"Account Balance",
   kpi_top:"Top Model", kpi_est:"Local Estimate", kpi_credits:"Remaining credits",
   loading_title:"Fetching your data…",
@@ -213,7 +321,7 @@ const I18N = {
   help_title:"How to get your _Bearer cookie? (click to expand)",
   empty_day:"No daily data", empty_range:"No data in this range",
   empty_tokens:"No token-detail records in this range (needs server data)", empty_mods:"No modality data",
-  band:"0–8 AM {a}% · 8–12 AM {b}% · 12–18 PM {c}% · 18–24 PM {d}%",
+  band:"(unused)",
   src_txt:"PT console {n} records (exact) · WorkBuddy logs {wb} · Recorder {log}.",
   src_auth:"Server data is authoritative; others are estimates.",
   src_no:"No server data — paste your _Bearer token above and click Load.",
@@ -223,36 +331,40 @@ const I18N = {
   tbl_empty:"No call records — click Load, or run a few PT calls first.",
   key_empty:"None yet — click Load to fetch server data.",
   key_hdr_model:"Key (masked)", key_hdr_calls:"Calls", key_hdr_amt:"Amount",
-  key_hdr_quota:"quota", key_hdr_models:"Main models", key_hdr_last:"Last call",
-  conv_empty:"None yet — click Load to fetch server data.", conv_match:"Calls attributed to sessions",
-  conv_matched:"Attributed to conversations", conv_other:"Other clients (dsh/Trae/scripts)",
-  conv_method:"Match: model name + nearest timestamp (±{w}s, one-to-one). Median |Δt| {m}s. Local & PT share no request_id, so fingerprint matching.",
-  conv_top:"Top 15 sessions", catalog_note:"Showing first 40; from GET /v1/models snapshot.",
+  key_hdr_models:"Main models", conv_empty:"None yet — click Load to fetch server data.",
   cat_hdr_model:"Model", cat_hdr_type:"Type", cat_hdr_price:"Priced",
-  all_accounts:"All accounts", r_24h:"24h", r_3d:"3d", r_7d:"7d", r_30d:"30d", r_90d:"90d", r_all:"All",
+  all_accounts:"All accounts", r_1d:"24h", r_7d:"7d", r_30d:"30d", r_90d:"90d", r_all:"All",
+  kpi_noprev:"No prior data", kpi_vsprev:"vs prev",
   mod_video:"Video", mod_image:"Image", mod_audio:"Audio", mod_chat:"Chat", mod_other:"Other",
   th_time:"Time", th_model:"Model", th_mod:"Modality", th_sec:"Sec", th_res:"Res",
   th_status:"Status", th_est:"Est $", th_real:"Real $", th_src:"Source",
   m_50:"p50", m_90:"p90", rec_unit:"rec", times_unit:"times", hour_unit:"h",
   ridge_note:"X-axis = total tokens per request (log scale); solid = p50 median, dashed = p90. Only calls with token details counted.",
-  hourgrid_note:"Each cell = calls in that hour of that day; darker = denser.",
+  hourgrid_note:"Each cell = calls in that hour of that day; darker = denser. Hover a cell for exact date & hour.",
   src_console:"console",
   err_auth:"Token invalid or expired — copy a fresh _Bearer cookie from your browser and click Retry.",
   err_network:"Cannot reach the server (network / CORS / blocked). Check your connection and click Retry.",
   err_timeout:"Request timed out (large data or slow network). Wait a moment and Retry, or pick a shorter date range.",
-  err_unknown:"Something went wrong: "
+  err_unknown:"Something went wrong: ",
+  range_lbl:"Range:", apply:"Apply", clear:"Clear", export_csv:"Export CSV",
+  tab_overview:"Overview", tab_detail:"Call Details", tab_model:"Models", tab_attr:"Attribution", tab_settings:"Settings",
+  attr_locked_title:"Attribution requires local logs",
+  attr_locked_body:"Call ↔ conversation attribution matches PowerTokens usage records against your local agent session logs (dsh / WorkBuddy). The browser cannot read local files, so this module is available only in the hybrid Skill package (offline Python scripts). The online version shows everything the _Bearer cookie can fetch — by model, modality, API key, time, and the official console stats.",
+  set_lang:"Language / Theme", set_fetch:"Fetch window (Since)", set_cache:"Local cache", set_privacy:"Privacy", set_clear:"Clear cache & token",
+  set_since_txt:"Currently pulling from {s} to now. Change the date above, then click Refresh to re-pull.",
+  set_cache_txt:"Records are cached per-month in localStorage. Toggle 'Use local cache' above; 'Force refresh' re-pulls everything."
  },
  zh:{
   title:"PowerTokens 用量看板", toggle_theme:"切换主题", toggle_lang:"EN",
   sub_generated:"生成于 {g} · 共 {n} 次调用",
   trend_title:"成本趋势（按天）", legend_est:"预估", legend_real:"真实",
-  donut_title:"模态占比", bar_title:"按模型成本（Top）", src_title:"数据来源",
+  donut_title:"模态占比", bar_title:"按模型成本（Top）",
   hourgrid_title:"日活分布（小时 × 日期）",
   ridge_title:"单次请求 token 大小分布（按模型，50%/90% 分位）",
   hourly_title:"0-24 时分布 · 按模型", dailymodel_title:"每日模型用量比例（调用次数堆叠）",
   off_title:"PT 控制台官方统计（服务端）", key_title:"按 API Key 成本（全量精确）",
-  conv_title:"调用 ↔ 对话 归因", tbl_title:"调用明细", tbl_show_all:"显示全部 {n} 条", tbl_show_less:"收起", tbl_showing:"显示 {a} / 共 {b} 条", tbl_showing_all:"全部 {n} 条",
-  catalog_title:"PT 模型目录对照（pt_models.json，可选）",
+  conv_title:"调用 ↔ 对话 归因", tbl_title:"调用明细",
+  tbl_show_all:"显示全部 {n} 条", tbl_show_less:"收起", tbl_showing:"显示 {a} / 共 {b} 条", tbl_showing_all:"全部 {n} 条",
   kpi_cost:"消耗（所选范围，服务端精确）", kpi_calls:"调用次数", kpi_tokens:"总 Token",
   kpi_io:"输入 : 输出", kpi_active:"活跃天数", kpi_balance:"账户余额",
   kpi_top:"TOP 模型", kpi_est:"本地估算", kpi_credits:"剩余 credits",
@@ -263,7 +375,7 @@ const I18N = {
   help_title:"如何获取 _Bearer cookie？（点击展开）",
   empty_day:"暂无按天数据", empty_range:"该范围内无数据",
   empty_tokens:"该范围内无含 token 明细的记录（需服务端数据）", empty_mods:"暂无模态数据",
-  band:"凌晨0-8 {a}% · 上午8-12 {b}% · 下午12-18 {c}% · 晚18-24 {d}%",
+  band:"(unused)",
   src_txt:"PT 控制台 {n} 条（精确）· WorkBuddy 日志 {wb} 条 · 记录器 {log} 条。",
   src_auth:"服务端为权威数据，其余是估算补充。",
   src_no:"无服务端数据 — 在上方粘贴 _Bearer token 后点 Load。",
@@ -273,24 +385,28 @@ const I18N = {
   tbl_empty:"暂无调用记录 — 点 Load，或先跑几次 PT 调用",
   key_empty:"暂无 — 点 Load 拉取服务端数据",
   key_hdr_model:"Key（掩码）", key_hdr_calls:"调用", key_hdr_amt:"金额",
-  key_hdr_quota:"quota", key_hdr_models:"主要模型", key_hdr_last:"最近调用",
-  conv_empty:"暂无 — 点 Load 拉取服务端数据", conv_match:"对上会话的调用占比",
-  conv_matched:"已归因到对话", conv_other:"其它客户端（dsh/Trae/脚本）",
-  conv_method:"匹配方式：模型名 + 时间戳就近（±{w}s，一对一占用），命中记录 |Δt| 中位数 {m}s。本地与 PT 无共享 request_id，故为指纹匹配。",
-  conv_top:"Top 15 会话", catalog_note:"仅展示前 40 条；来自 GET /v1/models 快照。",
+  key_hdr_models:"主要模型", conv_empty:"暂无 — 点 Load 拉取服务端数据",
   cat_hdr_model:"模型", cat_hdr_type:"类型", cat_hdr_price:"定价",
-  all_accounts:"全部账户", r_24h:"近24h", r_3d:"近3天", r_7d:"近7天", r_30d:"近30天", r_90d:"近90天", r_all:"全部",
+  all_accounts:"全部账户", r_1d:"近24小时", r_7d:"近7天", r_30d:"近30天", r_90d:"近90天", r_all:"全部",
+  kpi_noprev:"上期无数据", kpi_vsprev:"较上期",
   mod_video:"视频", mod_image:"图像", mod_audio:"音频", mod_chat:"对话", mod_other:"其他",
   th_time:"时间", th_model:"模型", th_mod:"模态", th_sec:"秒", th_res:"分辨率",
   th_status:"状态", th_est:"预估$", th_real:"真实$", th_src:"来源",
   m_50:"p50", m_90:"p90", rec_unit:"笔", times_unit:"次", hour_unit:"时",
   ridge_note:"横轴 = 单次请求 token 总量（对数轴）；实线 = p50 中位数，虚线 = p90。仅统计含 token 明细的调用。",
-  hourgrid_note:"每格 = 该日该小时的调用次数，颜色越深越密集。",
+  hourgrid_note:"每格 = 该日该小时的调用次数，颜色越深越密集。悬停单元格可查看具体日期与时段。",
   src_console:"控制台",
   err_auth:"Token 无效或已过期，请在浏览器重新复制 _Bearer cookie 后点 Retry。",
   err_network:"无法连接服务器（网络 / CORS / 被拦截）。请检查网络后点 Retry。",
   err_timeout:"请求超时（数据量大或网络慢）。请稍候再点 Retry，或缩短时间范围。",
-  err_unknown:"出错了："
+  err_unknown:"出错了：",
+  range_lbl:"时间范围：", apply:"应用", clear:"清除", export_csv:"导出CSV",
+  tab_overview:"总览", tab_detail:"调用明细", tab_model:"模型分析", tab_attr:"归因", tab_settings:"设置",
+  attr_locked_title:"归因需要本地日志",
+  attr_locked_body:"调用 ↔ 对话 归因需要把 PowerTokens 用量记录与你本地的 agent 会话日志（dsh / WorkBuddy）做指纹匹配。浏览器无法读取本地文件，所以该功能仅在「混合版」skill 包（离线 Python 脚本）中提供。纯线上版展示所有靠 _Bearer cookie 能获取的数据——按模型、模态、API Key、时间，以及控制台官方统计。",
+  set_lang:"语言 / 主题", set_fetch:"抓取范围（起始日）", set_cache:"本地缓存", set_privacy:"隐私", set_clear:"清除缓存与 token",
+  set_since_txt:"当前从 {s} 拉取到现在。修改上方日期后点 Refresh 重新拉取。",
+  set_cache_txt:"记录按月缓存在浏览器 localStorage。勾选上方「Use local cache」；「Force refresh」会强制全部重新拉取。"
  }
 };
 function T(kk,p){ const d=I18N[LANG]||I18N.en; let s=(d&&d[kk]!=null)?d[kk]:(I18N.en[kk]!=null?I18N.en[kk]:kk); if(p){for(const j in p){ if(p[j]!=null) s=s.split("{"+j+"}").join(String(p[j])); } } return s; }
@@ -299,7 +415,7 @@ function applyI18n(){ document.querySelectorAll("[data-i18n]").forEach(e=>{ cons
 const MOD_COLOR={video:"var(--vid)",image:"var(--img)",audio:"var(--aud)",chat:"var(--chat)",other:"var(--other)"};
 const fmt=n=>n==null?"-":"$"+Number(n).toFixed(4);
 const PALETTE=["#2563eb","#16a34a","#ec4899","#f59e0b","#6366f1","#10b981","#ef4444","#0ea5e9","#a855f7","#84cc16"];
-let topModels=[];let activeDays=0;let activeAccount="__all__";
+let topModels=[];
 const BJ=8*3600;
 function mColor(m){const i=topModels.indexOf(m);return i>=0?PALETTE[i%PALETTE.length]:"var(--muted)";}
 function dayOf(ts){const d=new Date((ts+BJ)*1000);return d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0")+"-"+String(d.getUTCDate()).padStart(2,"0");}
@@ -307,209 +423,264 @@ function hourOf(ts){return new Date((ts+BJ)*1000).getUTCHours();}
 function fmtTok(n){if(!n)return "0"; if(LANG==="zh"){ if(n>=1e8)return (n/1e8).toFixed(2)+"亿"; if(n>=1e4)return (n/1e4).toFixed(1)+"万"; return String(Math.round(n)); } else { if(n>=1e6)return (n/1e6).toFixed(2)+"M"; if(n>=1e3)return (n/1e3).toFixed(1)+"K"; return String(Math.round(n)); } }
 function fmtD(n){return "$"+Number(n||0).toFixed(2);}
 function pct(arr,q){const a=arr.slice().sort((x,y)=>x-y);return a[Math.min(a.length-1,Math.floor(q*(a.length-1)))];}
-function filtered(){let f=RECS;if(activeAccount&&activeAccount!=="__all__")f=f.filter(r=>r[7]===activeAccount);if(activeDays){const cut=Math.floor(Date.now()/1000)-activeDays*86400;f=f.filter(r=>r[0]>=cut);}return f;}
 function balTxt(){const b=DATA.server&&DATA.server.balance;return b?"$"+Number(b.equal_usd||0).toFixed(4):"-";}
-function renderKpis(F){
- let calls=F.length,cost=0,tin=0,tout=0;const days=new Set();
- F.forEach(r=>{cost+=r[4];tin+=r[2];tout+=r[3];days.add(dayOf(r[0]));});
- const bHas=(DATA.server&&DATA.server.balance&&DATA.server.balance.equal_usd!=null);
- let rows;
- if(RECS.length){
-  rows=[
-   {l:T("kpi_cost"), to:cost, f:v=>"$"+v.toFixed(2)},
-   {l:T("kpi_calls"), to:calls, f:v=>Math.round(v).toLocaleString()},
-   {l:T("kpi_tokens"), to:tin+tout, f:v=>fmtTok(v)},
-   {l:T("kpi_io"), to:(tout?tin/tout:0), f:v=>(Math.round(v*100)/100)+" : 1"},
-   {l:T("kpi_active"), to:days.size, f:v=>String(Math.round(v))},
-   {l:T("kpi_balance"), to:bHas?balNum():0, f:v=>"$"+v.toFixed(4), text:bHas?null:"-"}
+
+// ---- range helpers (Direction A) ----
+function parseDate(s){ if(!s) return null; const t=Date.parse(s+"T00:00:00Z")/1000; return isNaN(t)?null:t; }
+function parseDateEnd(s){ if(!s) return null; const t=Date.parse(s+"T23:59:59Z")/1000; return isNaN(t)?null:t; }
+function curRange(){
+  if(customActive && customStart && customEnd){ const s=parseDate(customStart), e=parseDateEnd(customEnd); if(s!=null&&e!=null) return {start:s,end:e,label:customStart+" ~ "+customEnd}; }
+  const now=Math.floor(Date.now()/1000);
+  if(activeDays>0) return {start:now-activeDays*86400, end:now, label:T("r_"+activeDays+"d")};
+  return {start:0, end:now, label:T("r_all")};
+}
+function filtered(){
+  const {start,end}=curRange();
+  let f=RECS;
+  if(activeAccount&&activeAccount!=="__all__") f=f.filter(r=>r[7]===activeAccount);
+  if(start>0) f=f.filter(r=>r[0]>=start);
+  f=f.filter(r=>r[0]<=end);
+  return f;
+}
+function rangeRecords(){
+  const {start,end}=curRange();
+  let rs=DATA.records||[];
+  if(activeAccount&&activeAccount!=="__all__") rs=rs.filter(x=>x.account===activeAccount);
+  return rs.filter(x=>x.ts>=start && x.ts<=end);
+}
+function prevRecords(){
+  const r=curRange(); if(!r) return [];
+  const len=r.end-r.start; if(len<=0) return [];
+  const ps=r.start-len, pe=r.start;
+  let rs=DATA.records||[];
+  if(activeAccount&&activeAccount!=="__all__") rs=rs.filter(x=>x.account===activeAccount);
+  return rs.filter(x=>x.ts>=ps && x.ts<=pe);
+}
+function metricsOf(recs){
+  let calls=recs.length,cost=0,tin=0,tout=0; const days=new Set();
+  recs.forEach(r=>{ cost+=(r.cost_real||0); tin+=(r.tin||0); tout+=(r.tout||0); days.add(dayOf(r.ts)); });
+  return {calls,cost,tin,tout,days:days.size};
+}
+function deltaHtml(cur, prev, invert, f){
+  const r=curRange(); if(r && r.start<=0) return '<div class="delta none">—</div>';
+  if(prev==null) return '<div class="delta none">—</div>';
+  if(prev===0) return '<div class="delta none">'+T("kpi_noprev")+'</div>';
+  const diff=cur-prev;
+  const up=cur>=prev;
+  const good = invert ? !up : up;
+  const cls = good ? "up" : "down";
+  const arrow = up ? "▲" : "▼";
+  const abs=(diff>=0?"+":"-")+(f?f(Math.abs(diff)):String(Math.round(Math.abs(diff))));
+  const pctv=diff/Math.abs(prev)*100;
+  const showPct = Math.abs(prev)>=1 && Math.abs(pctv)<=1000;
+  const main = showPct ? (arrow+" "+Math.abs(pctv).toFixed(0)+"%") : abs;
+  const extra = showPct ? ' <span class="dabs">'+abs+'</span>' : "";
+  return '<div class="delta '+cls+'">'+main+" "+T("kpi_vsprev")+extra+'</div>';
+}
+function renderKpis(){
+  const cur=metricsOf(rangeRecords());
+  const prev=metricsOf(prevRecords());
+  const bHas=(DATA.server&&DATA.server.balance&&DATA.server.balance.equal_usd!=null);
+  const bal=bHas?Number(DATA.server.balance.equal_usd):null;
+  const rows=[
+    {l:T("kpi_cost"),   to:cur.cost, f:v=>"$"+v.toFixed(2), prev:prev.cost, invert:true},
+    {l:T("kpi_calls"),  to:cur.calls, f:v=>Math.round(v).toLocaleString(), prev:prev.calls},
+    {l:T("kpi_tokens"), to:cur.tin+cur.tout, f:v=>fmtTok(v), prev:prev.tin+prev.tout},
+    {l:T("kpi_io"),     to:(cur.tout?cur.tin/cur.tout:0), f:v=>(Math.round(v*100)/100)+" : 1", prev:(prev.tout?prev.tin/prev.tout:0)},
+    {l:T("kpi_active"), to:cur.days, f:v=>String(Math.round(v)), prev:prev.days},
+    {l:T("kpi_balance"),to:bal, f:v=>"$"+Number(v).toFixed(4), prev:null, text:bal==null?"-":null}
   ];
- }else{
-  rows=[
-   {l:T("kpi_cost"), text:fmt(k.real)+" ("+k.real_n+" "+T("rec_unit")+")"},
-   {l:T("kpi_calls"), to:k.calls, f:v=>Math.round(v).toLocaleString()},
-   {l:T("kpi_top"), text:k.top_model},
-   {l:T("kpi_est"), text:"$"+Number(k.est).toFixed(4)+" ("+k.est_n+" "+T("rec_unit")+")"},
-   {l:T("kpi_balance"), to:bHas?balNum():0, f:v=>"$"+v.toFixed(4), text:bHas?null:"-"},
-   {l:T("kpi_credits"), text:(DATA.server&&DATA.server.balance)?String(DATA.server.balance.credits):"-"}
-  ];
- }
- const el=document.getElementById("kpis");
- el.innerHTML=rows.map(x=>`<div class="kpi"><div class="v">${x.text!=null?x.text:'0'}</div><div class="l">${x.l}</div></div>`).join("");
- const cells=el.querySelectorAll(".kpi .v");
- rows.forEach((x,i)=>{ if(x.to!=null && cells[i]) animateNum(cells[i], x.to, x.f); });
+  const el=document.getElementById("kpis");
+  el.innerHTML=rows.map(x=>{
+    const d=(x.prev==null)?'<div class="delta none">—</div>':deltaHtml(x.to,x.prev,x.invert,x.f);
+    const val=(x.text!=null)?x.text:(x.to==null?"-":"0");
+    return `<div class="kpi"><div class="l">${x.l}</div><div class="v">${val}</div>${d}</div>`;
+  }).join("");
+  const cells=el.querySelectorAll(".kpi .v");
+  rows.forEach((x,i)=>{ if(x.to!=null && cells[i]) animateNum(cells[i], x.to, x.f); });
 }
 function renderTrend(F){
- const el=document.getElementById("lineChart");
- let d;
- if(RECS.length){
-  const m={};F.forEach(r=>{const dd=dayOf(r[0]);const o=m[dd]=m[dd]||{est:0,real:0};o.real+=r[4];o.est+=r[5];});
-  d=Object.keys(m).sort().map(x=>({day:x,est:m[x].est,real:m[x].real}));
- }else d=DATA.daily;
- if(!d.length){el.innerHTML='<div class="empty">'+T("empty_day")+'</div>';return;}
- const W=(el.clientWidth||520),H=200,pad=30;const max=Math.max(1,...d.map(x=>x.est+x.real));
- const sx=i=>pad+(W-2*pad)*i/(d.length-1||1);
- const sy=v=>H-pad-(H-2*pad)*v/max;
- let s1="M",s2="M";
- d.forEach((x,i)=>{s1+=(i?"L":"")+sx(i).toFixed(1)+","+sy(x.est).toFixed(1);s2+=(i?"L":"")+sx(i).toFixed(1)+","+sy(x.real).toFixed(1);});
- let dots="";
- d.forEach((x,i)=>{dots+=`<circle cx="${sx(i).toFixed(1)}" cy="${sy(x.est).toFixed(1)}" r="3" fill="var(--est)"><title>${x.day} ${T("legend_est")} ${fmt(x.est)}</title></circle>`;
+  const el=document.getElementById("lineChart");
+  let d;
+  if(RECS.length){
+    const m={};F.forEach(r=>{const dd=dayOf(r[0]);const o=m[dd]=m[dd]||{est:0,real:0};o.real+=r[4];o.est+=r[5];});
+    d=Object.keys(m).sort().map(x=>({day:x,est:m[x].est,real:m[x].real}));
+  }else d=DATA.daily;
+  if(!d.length){el.innerHTML='<div class="empty">'+T("empty_day")+'</div>';return;}
+  const W=(el.clientWidth||520),H=200,pad=30;const max=Math.max(1,...d.map(x=>x.est+x.real));
+  const sx=i=>pad+(W-2*pad)*i/(d.length-1||1);
+  const sy=v=>H-pad-(H-2*pad)*v/max;
+  let s1="M",s2="M";
+  d.forEach((x,i)=>{s1+=(i?"L":"")+sx(i).toFixed(1)+","+sy(x.est).toFixed(1);s2+=(i?"L":"")+sx(i).toFixed(1)+","+sy(x.real).toFixed(1);});
+  let dots="";
+  d.forEach((x,i)=>{dots+=`<circle cx="${sx(i).toFixed(1)}" cy="${sy(x.est).toFixed(1)}" r="3" fill="var(--est)"><title>${x.day} ${T("legend_est")} ${fmt(x.est)}</title></circle>`;
    dots+=`<circle cx="${sx(i).toFixed(1)}" cy="${sy(x.real).toFixed(1)}" r="3" fill="var(--real)"><title>${x.day} ${T("legend_real")} ${fmt(x.real)}</title></circle>`;});
- el.innerHTML=`<svg viewBox="0 0 ${W} ${H}"><path d="${s1}" fill="none" stroke="var(--est)" stroke-width="2"/><path d="${s2}" fill="none" stroke="var(--real)" stroke-width="2" stroke-dasharray="4 3"/>${dots}
-  <line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="var(--line)"/></svg>`;
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}"><path d="${s1}" fill="none" stroke="var(--est)" stroke-width="2"/><path d="${s2}" fill="none" stroke="var(--real)" stroke-width="2" stroke-dasharray="4 3"/>${dots}
+   <line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="var(--line)"/></svg>`;
 }
 function renderHourGrid(F){
- const el=document.getElementById("hourGrid");
- if(!F.length){el.innerHTML='<div class="empty">'+T("empty_range")+'</div>';return;}
- const map={};const bands=[0,0,0,0];
- F.forEach(r=>{const d=dayOf(r[0]),h=hourOf(r[0]);if(!map[d])map[d]=new Array(24).fill(0);map[d][h]++;bands[h<8?0:h<12?1:h<18?2:3]++;});
- const days=Object.keys(map).sort();const n=F.length;
- const bandTxt=T("band",{a:(100*bands[0]/n).toFixed(1),b:(100*bands[1]/n).toFixed(1),c:(100*bands[2]/n).toFixed(1),d:(100*bands[3]/n).toFixed(1)});
- const W=(el.clientWidth||1060),padL=78,cw=(W-padL-6)/24,ch=13,rh=15,padT=18;
- const H=padT+days.length*rh+8;
- let maxC=1;days.forEach(d=>map[d].forEach(c=>{if(c>maxC)maxC=c;}));
- let g=`<text x="${padL}" y="12" font-size="11" fill="var(--muted)">${bandTxt}</text>`;
- days.forEach((d,i)=>{
-  const y=padT+i*rh;
-  g+=`<text x="${padL-6}" y="${y+ch}" text-anchor="end" font-size="10" fill="var(--muted)">${d.slice(5)}</text>`;
-  for(let h=0;h<24;h++){const c=map[d][h];const a=c?(0.12+0.88*Math.sqrt(c/maxC)).toFixed(2):"0.05";
-   g+=`<rect x="${(padL+h*cw).toFixed(1)}" y="${y}" width="${(cw-1.5).toFixed(1)}" height="${ch}" rx="2" fill="rgba(37,99,235,${a})"><title>${d} ${h}:00-${h+1}:00 · ${c} ${T("times_unit")}</title></rect>`;}
- });
- el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${g}</svg><div class="sub">${T("hourgrid_note")}</div>`;
+  const el=document.getElementById("hourGrid");
+  if(!F.length){el.innerHTML='<div class="empty">'+T("empty_range")+'</div>';return;}
+  const map={};
+  F.forEach(r=>{const d=dayOf(r[0]),h=hourOf(r[0]);if(!map[d])map[d]=new Array(24).fill(0);map[d][h]++;});
+  const days=Object.keys(map).sort();
+  const W=(el.clientWidth||1060),padL=78,cw=(W-padL-6)/24,ch=13,rh=15;
+  const axisH=14, padT=axisH+4;
+  const H=padT+days.length*rh+8;
+  let maxC=1;days.forEach(d=>map[d].forEach(c=>{if(c>maxC)maxC=c;}));
+  // hour axis header: label every hour when there is room, otherwise every 2 / 4 hours
+  const step = cw>=15 ? 1 : (cw>=9 ? 2 : 4);
+  let g=``;
+  for(let h=0;h<24;h++){
+    if(h%step!==0 && h!==23) continue;
+    g+=`<text x="${(padL+h*cw+cw/2).toFixed(1)}" y="${axisH}" text-anchor="middle" font-size="11" fill="var(--muted)">${h}</text>`;
+  }
+  days.forEach((d,i)=>{
+   const y=padT+i*rh;
+   g+=`<text x="${padL-6}" y="${y+ch}" text-anchor="end" font-size="11" fill="var(--muted)">${d.slice(5)}</text>`;
+   for(let h=0;h<24;h++){const c=map[d][h];const a=c?(0.12+0.88*Math.sqrt(c/maxC)).toFixed(2):"0.05";
+    g+=`<rect x="${(padL+h*cw).toFixed(1)}" y="${y}" width="${(cw-1.5).toFixed(1)}" height="${ch}" rx="2" fill="rgba(37,99,235,${a})" data-tip="${d} ${String(h).padStart(2,"0")}:00–${String(h+1).padStart(2,"0")}:00 · ${c} ${T("times_unit")}"></rect>`;}
+  });
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${g}</svg><div class="sub" style="margin-top:8px">${T("hourgrid_note")}</div>`;
+  el.querySelectorAll("rect").forEach(rc=>{
+    rc.addEventListener("mousemove",e=>showTip(e,rc.dataset.tip||""));
+    rc.addEventListener("mouseleave",hideTip);
+  });
 }
 function renderRidge(F){
- const el=document.getElementById("ridge");
- const byM={};
- F.forEach(r=>{const t=r[2]+r[3];if(t>0)(byM[r[1]]=byM[r[1]]||[]).push(t);});
- let mods=Object.keys(byM).filter(m=>byM[m].length>=3).sort((a,b)=>byM[b].length-byM[a].length).slice(0,8);
- if(!mods.length){el.innerHTML='<div class="empty">'+T("empty_tokens")+'</div>';return;}
- let lo=Infinity,hi=0;
- mods.forEach(m=>byM[m].forEach(v=>{if(v<lo)lo=v;if(v>hi)hi=v;}));
- lo=Math.log10(1+lo);hi=Math.log10(1+hi);
- const W=(el.clientWidth||520),H=mods.length*36+34,padL=108,padR=100,padT=10;
- const plotW=W-padL-padR;
- const xw=v=>padL+plotW*(Math.log10(1+v)-lo)/((hi-lo)||1);
- let g="";
- mods.forEach((m,i)=>{
-  const vals=byM[m];const base=padT+i*36+30;
-  const p50=pct(vals,0.5),p90=pct(vals,0.9);
-  const B=36;const hist=new Array(B).fill(0);
-  vals.forEach(v=>{const b=Math.min(B-1,Math.floor((Math.log10(1+v)-lo)/((hi-lo)||1)*B));hist[b]++;});
-  const hmax=Math.max(1,...hist);
-  hist.forEach((c,b)=>{
-   if(!c)return;
-   const x0=xw(Math.pow(10,lo+(hi-lo)*b/B)-1),x1=xw(Math.pow(10,lo+(hi-lo)*(b+1)/B)-1);
-   const h=26*c/hmax;
-   g+=`<rect x="${x0.toFixed(1)}" y="${(base-h).toFixed(1)}" width="${Math.max(1,x1-x0).toFixed(1)}" height="${h.toFixed(1)}" fill="${mColor(m)}" opacity="0.55"/>`;
+  const el=document.getElementById("ridge");
+  const byM={};
+  F.forEach(r=>{const t=r[2]+r[3];if(t>0)(byM[r[1]]=byM[r[1]]||[]).push(t);});
+  let mods=Object.keys(byM).filter(m=>byM[m].length>=3).sort((a,b)=>byM[b].length-byM[a].length).slice(0,8);
+  if(!mods.length){el.innerHTML='<div class="empty">'+T("empty_tokens")+'</div>';return;}
+  let lo=Infinity,hi=0;
+  mods.forEach(m=>byM[m].forEach(v=>{if(v<lo)lo=v;if(v>hi)hi=v;}));
+  lo=Math.log10(1+lo);hi=Math.log10(1+hi);
+  const W=(el.clientWidth||520),H=mods.length*36+34,padL=108,padR=100,padT=10;
+  const plotW=W-padL-padR;
+  const xw=v=>padL+plotW*(Math.log10(1+v)-lo)/((hi-lo)||1);
+  let g="";
+  mods.forEach((m,i)=>{
+   const vals=byM[m];const base=padT+i*36+30;
+   const p50=pct(vals,0.5),p90=pct(vals,0.9);
+   const B=36;const hist=new Array(B).fill(0);
+   vals.forEach(v=>{const b=Math.min(B-1,Math.floor((Math.log10(1+v)-lo)/((hi-lo)||1)*B));hist[b]++;});
+   const hmax=Math.max(1,...hist);
+   hist.forEach((c,b)=>{
+    if(!c)return;
+    const x0=xw(Math.pow(10,lo+(hi-lo)*b/B)-1),x1=xw(Math.pow(10,lo+(hi-lo)*(b+1)/B)-1);
+    const h=26*c/hmax;
+    g+=`<rect x="${x0.toFixed(1)}" y="${(base-h).toFixed(1)}" width="${Math.max(1,x1-x0).toFixed(1)}" height="${h.toFixed(1)}" fill="${mColor(m)}" opacity="0.55"/>`;
+   });
+   g+=`<text x="${padL-6}" y="${base-8}" text-anchor="end" font-size="11" fill="var(--ink)">${m.slice(0,16)}</text>`;
+   g+=`<text x="${padL-6}" y="${base+5}" text-anchor="end" font-size="10" fill="var(--muted)">${vals.length}${T("times_unit")}</text>`;
+   g+=`<line x1="${xw(p50).toFixed(1)}" y1="${base-28}" x2="${xw(p50).toFixed(1)}" y2="${base}" stroke="var(--ink)" stroke-width="1" opacity="0.6"/>`;
+   g+=`<line x1="${xw(p90).toFixed(1)}" y1="${base-28}" x2="${xw(p90).toFixed(1)}" y2="${base}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 2"/>`;
+   g+=`<text x="${W-padR+6}" y="${base-12}" font-size="10" fill="var(--ink)">${T("m_50")} ${fmtTok(p50)}</text>`;
+   g+=`<text x="${W-padR+6}" y="${base+2}" font-size="10" fill="var(--muted)">${T("m_90")} ${fmtTok(p90)}</text>`;
   });
-  g+=`<text x="${padL-6}" y="${base-8}" text-anchor="end" font-size="11" fill="var(--ink)">${m.slice(0,16)}</text>`;
-  g+=`<text x="${padL-6}" y="${base+5}" text-anchor="end" font-size="10" fill="var(--muted)">${vals.length}${T("times_unit")}</text>`;
-  g+=`<line x1="${xw(p50).toFixed(1)}" y1="${base-28}" x2="${xw(p50).toFixed(1)}" y2="${base}" stroke="var(--ink)" stroke-width="1" opacity="0.6"/>`;
-  g+=`<line x1="${xw(p90).toFixed(1)}" y1="${base-28}" x2="${xw(p90).toFixed(1)}" y2="${base}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 2"/>`;
-  g+=`<text x="${W-padR+6}" y="${base-12}" font-size="10" fill="var(--ink)">${T("m_50")} ${fmtTok(p50)}</text>`;
-  g+=`<text x="${W-padR+6}" y="${base+2}" font-size="10" fill="var(--muted)">${T("m_90")} ${fmtTok(p90)}</text>`;
- });
- el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${g}</svg><div class="sub">${T("ridge_note")}</div>`;
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${g}</svg><div class="sub">${T("ridge_note")}</div>`;
 }
 function renderHourlyModel(F){
- const el=document.getElementById("hourlyModel");
- const tm=topModels.slice(0,8);
- if(!F.length||!tm.length){el.innerHTML='<div class="empty">'+T("empty_range")+'</div>';return;}
- const sums=tm.map(()=>new Array(24).fill(0));
- F.forEach(r=>{const i=tm.indexOf(r[1]);if(i>=0)sums[i][hourOf(r[0])]++;});
- const W=(el.clientWidth||520),H=210,pad=26;
- const max=Math.max(1,...Array.from({length:24},(_,h)=>sums.reduce((a,s)=>a+s[h],0)));
- const x=h=>pad+(W-2*pad)*h/23;const y=v=>H-pad-(H-2*pad)*v/max;
- let paths="";let cum=new Array(24).fill(0);
- tm.forEach((m,i)=>{
-  const up=cum.map((c,h)=>c+sums[i][h]);
-  let p=up.map((v,h)=>(h?"L":"M")+x(h).toFixed(1)+","+y(v).toFixed(1)).join("");
-  for(let h=23;h>=0;h--)p+="L"+x(h).toFixed(1)+","+y(cum[h]).toFixed(1);
-  paths+=`<path d="${p}Z" fill="${mColor(m)}" opacity="0.7"/>`;
-  cum=up;
- });
- let ax="";
- [0,6,12,18,23].forEach(h=>ax+=`<text x="${x(h).toFixed(1)}" y="${H-8}" font-size="10" text-anchor="middle" fill="var(--muted)">${h}${T("hour_unit")}</text>`);
- const leg=tm.map(m=>`<span><i style="background:${mColor(m)}"></i>${m.slice(0,18)}</span>`).join("");
- el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${paths}<line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="var(--line)"/>${ax}</svg><div class="legend">${leg}</div>`;
+  const el=document.getElementById("hourlyModel");
+  const tm=topModels.slice(0,8);
+  if(!F.length||!tm.length){el.innerHTML='<div class="empty">'+T("empty_range")+'</div>';return;}
+  const sums=tm.map(()=>new Array(24).fill(0));
+  F.forEach(r=>{const i=tm.indexOf(r[1]);if(i>=0)sums[i][hourOf(r[0])]++;});
+  const W=(el.clientWidth||520),H=210,pad=26;
+  const max=Math.max(1,...Array.from({length:24},(_,h)=>sums.reduce((a,s)=>a+s[h],0)));
+  const x=h=>pad+(W-2*pad)*h/23;const y=v=>H-pad-(H-2*pad)*v/max;
+  let paths="";let cum=new Array(24).fill(0);
+  tm.forEach((m,i)=>{
+   const up=cum.map((c,h)=>c+sums[i][h]);
+   let p=up.map((v,h)=>(h?"L":"M")+x(h).toFixed(1)+","+y(v).toFixed(1)).join("");
+   for(let h=23;h>=0;h--)p+="L"+x(h).toFixed(1)+","+y(cum[h]).toFixed(1);
+   paths+=`<path d="${p}Z" fill="${mColor(m)}" opacity="0.7"/>`;
+   cum=up;
+  });
+  let ax="";
+  [0,6,12,18,23].forEach(h=>ax+=`<text x="${x(h).toFixed(1)}" y="${H-8}" font-size="10" text-anchor="middle" fill="var(--muted)">${h}${T("hour_unit")}</text>`);
+  const leg=tm.map(m=>`<span><i style="background:${mColor(m)}"></i>${m.slice(0,18)}</span>`).join("");
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${paths}<line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="var(--line)"/>${ax}</svg><div class="legend">${leg}</div>`;
 }
 function renderDailyModel(F){
- const el=document.getElementById("dailyModel");
- const tm=topModels.slice(0,8);
- if(!F.length||!tm.length){el.innerHTML='<div class="empty">'+T("empty_range")+'</div>';return;}
- const days=[...new Set(F.map(r=>dayOf(r[0])))].sort();
- const sums=days.map(()=>new Array(tm.length+1).fill(0));
- F.forEach(r=>{const di=days.indexOf(dayOf(r[0]));const mi=tm.indexOf(r[1]);sums[di][mi<0?tm.length:mi]++;});
- const W=(el.clientWidth||520),H=210,pad=26;
- const max=Math.max(1,...days.map((_,i)=>sums[i].reduce((a,b)=>a+b,0)));
- const bw=Math.max(3,(W-2*pad)/days.length*0.72);
- let g="";
- const step=Math.max(1,Math.ceil(days.length/10));
- days.forEach((d,i)=>{const x0=pad+(W-2*pad)*(i+0.5)/days.length-bw/2;let y=H-pad;
-  sums[i].forEach((c,mi)=>{if(!c)return;const h=(H-2*pad)*c/max;y-=h;
-   g+=`<rect x="${x0.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" fill="${mi<tm.length?mColor(tm[mi]):"var(--other)"}" opacity="0.85"><title>${d} · ${mi<tm.length?tm[mi]:T("mod_other")} · ${c} ${T("times_unit")}</title></rect>`;});
-  if(i%step===0)g+=`<text x="${(x0+bw/2).toFixed(1)}" y="${H-8}" font-size="9" text-anchor="middle" fill="var(--muted)">${d.slice(5)}</text>`;
- });
- const leg=tm.map(m=>{let tc=0;F.forEach(r=>{if(r[1]===m)tc++;});return `<span><i style="background:${mColor(m)}"></i>${m.slice(0,16)} ${tc}${T("times_unit")}</span>`;}).join("");
- el.innerHTML=`<svg viewBox="0 0 ${W} ${H}"><line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="var(--line)"/>${g}</svg><div class="legend">${leg}</div>`;
+  const el=document.getElementById("dailyModel");
+  const tm=topModels.slice(0,8);
+  if(!F.length||!tm.length){el.innerHTML='<div class="empty">'+T("empty_range")+'</div>';return;}
+  const days=[...new Set(F.map(r=>dayOf(r[0])))].sort();
+  const sums=days.map(()=>new Array(tm.length+1).fill(0));
+  F.forEach(r=>{const di=days.indexOf(dayOf(r[0]));const mi=tm.indexOf(r[1]);sums[di][mi<0?tm.length:mi]++;});
+  const W=(el.clientWidth||520),H=210,pad=26;
+  const max=Math.max(1,...days.map((_,i)=>sums[i].reduce((a,b)=>a+b,0)));
+  const bw=Math.max(3,(W-2*pad)/days.length*0.72);
+  let g="";
+  const step=Math.max(1,Math.ceil(days.length/10));
+  days.forEach((d,i)=>{const x0=pad+(W-2*pad)*(i+0.5)/days.length-bw/2;let y=H-pad;
+   sums[i].forEach((c,mi)=>{if(!c)return;const h=(H-2*pad)*c/max;y-=h;
+    g+=`<rect x="${x0.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" fill="${mi<tm.length?mColor(tm[mi]):"var(--other)"}" opacity="0.85"><title>${d} · ${mi<tm.length?tm[mi]:T("mod_other")} · ${c} ${T("times_unit")}</title></rect>`;});
+   if(i%step===0)g+=`<text x="${(x0+bw/2).toFixed(1)}" y="${H-8}" font-size="9" text-anchor="middle" fill="var(--muted)">${d.slice(5)}</text>`;
+  });
+  const leg=tm.map(m=>{let tc=0;F.forEach(r=>{if(r[1]===m)tc++;});return `<span><i style="background:${mColor(m)}"></i>${m.slice(0,16)} ${tc}${T("times_unit")}</span>`;}).join("");
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}"><line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="var(--line)"/>${g}</svg><div class="legend">${leg}</div>`;
 }
-const RANGES=[[1,"r_24h"],[3,"r_3d"],[7,"r_7d"],[30,"r_30d"],[90,"r_90d"],[0,"r_all"]];
+const RANGES=[[1,"r_1d"],[7,"r_7d"],[30,"r_30d"],[90,"r_90d"],[0,"r_all"]];
 function renderAccounts(){
- const el=document.getElementById("accbar");
- if(!DATA.accounts||DATA.accounts.length<2){el.style.display="none";return;}
- el.style.display="flex";
- const all=DATA.accounts.reduce((a,x)=>({calls:a.calls+x.calls,real:a.real+x.real}),{calls:0,real:0});
- let h=`<button class="fb ${activeAccount==='__all__'?'on':''}" data-a="__all__">${T("all_accounts")} · $${all.real.toFixed(2)} · ${all.calls}${T("times_unit")}</button>`;
- h+=DATA.accounts.map(x=>`<button class="fb ${activeAccount===x.name?'on':''}" data-a="${x.name}">${x.name} · $${x.real.toFixed(2)} · ${x.calls}${T("times_unit")}</button>`).join("");
- el.innerHTML=h;
- el.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{activeAccount=b.dataset.a;renderAccounts();renderAll();}));
+  const el=document.getElementById("accbar");
+  if(!DATA.accounts||DATA.accounts.length<2){el.style.display="none";return;}
+  el.style.display="flex";
+  const all=DATA.accounts.reduce((a,x)=>({calls:a.calls+x.calls,real:a.real+x.real}),{calls:0,real:0});
+  let h=`<button class="fb ${activeAccount==='__all__'?'on':''}" data-a="__all__">${T("all_accounts")} · $${all.real.toFixed(2)} · ${all.calls}${T("times_unit")}</button>`;
+  h+=DATA.accounts.map(x=>`<button class="fb ${activeAccount===x.name?'on':''}" data-a="${x.name}">${x.name} · $${x.real.toFixed(2)} · ${x.calls}${T("times_unit")}</button>`).join("");
+  el.innerHTML=h;
+  el.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{activeAccount=b.dataset.a;renderAllPages();}));
 }
 function renderFbar(){
- const el=document.getElementById("fbar");
- el.innerHTML=RANGES.map(r=>`<button class="fb ${activeDays===r[0]?'on':''}" data-d="${r[0]}">${T(r[1])}</button>`).join("");
- el.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{activeDays=+b.dataset.d;renderAll();}));
+  const el=document.getElementById("fbar");
+  el.innerHTML=RANGES.map(r=>`<button class="fb ${!customActive&&activeDays===r[0]?'on':''}" data-d="${r[0]}">${T(r[1])}</button>`).join("");
+  el.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{activeDays=+b.dataset.d;customActive=false;renderAllPages();}));
 }
 function renderAll(){
- const F=filtered();
- const c={};F.forEach(r=>c[r[1]]=(c[r[1]]||0)+1);
- topModels=Object.keys(c).sort((a,b)=>c[b]-c[a]).slice(0,10);
- renderKpis(F);renderTrend(F);renderHourGrid(F);renderRidge(F);renderHourlyModel(F);renderDailyModel(F);
+  const F=filtered();
+  const c={};F.forEach(r=>c[r[1]]=(c[r[1]]||0)+1);
+  topModels=Object.keys(c).sort((a,b)=>c[b]-c[a]).slice(0,10);
+  renderKpis();renderTrend(F);renderHourGrid(F);renderRidge(F);renderHourlyModel(F);renderDailyModel(F);
 }
 function renderBar(){
- const el=document.getElementById("barChart");const m=DATA.models.slice(0,10);
- if(!m.length){el.innerHTML='<div class="empty">'+T("empty_range")+'</div>';return;}
- const W=el.clientWidth||520;
- const top=8,barH=14,gap=10,padL=10;
- const labelColW=Math.min(Math.round(W*0.40),180);
- const maxChars=Math.max(4,Math.floor((labelColW-8)/6.2));
- const barX=padL+labelColW+8, padR=62, plotW=Math.max(40,W-barX-padR);
- const H=top+m.length*(barH+gap)+4;
- const max=Math.max(1,...m.map(x=>x.est+x.real));
- const ramp=["#185FA5","#378ADD","#378ADD","#85B7EB","#85B7EB","#B5D4F4","#B5D4F4","#B5D4F4","#B5D4F4","#B5D4F4"];
- let grid="";[0,.25,.5,.75,1].forEach(t=>{const gx=barX+plotW*t;grid+=`<line x1="${gx.toFixed(1)}" y1="${top}" x2="${gx.toFixed(1)}" y2="${H-4}" stroke="var(--line)" stroke-width="1" opacity="0.55"/>`;});
- let rows="";
- m.forEach((x,i)=>{const y=top+i*(barH+gap);const w=Math.max(2,plotW*(x.est+x.real)/max);const c=ramp[i]||"#B5D4F4";
-   const nm=x.model.length>maxChars?x.model.slice(0,maxChars-1)+"…":x.model;
-   rows+=`<g><text x="${barX-8}" y="${y+barH/2+4}" text-anchor="end" font-size="11" fill="var(--ink)">${esc(nm)}</text>`
-     +`<rect x="${barX}" y="${y}" width="${w.toFixed(1)}" height="${barH}" rx="4" fill="${c}"><title>${esc(x.model)} · ${x.calls} ${T("times_unit")} · ${T("legend_est")}${fmt(x.est)} ${T("legend_real")}${fmt(x.real)}</title></rect></g>`;});
- let vals="";
- m.forEach((x,i)=>{const y=top+i*(barH+gap);vals+=`<text x="${W-8}" y="${y+barH/2+4}" text-anchor="end" font-size="11" fill="var(--muted)">${fmt(x.est+x.real)}</text>`;});
- el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${grid}${rows}${vals}</svg>`;
- const rs=el.querySelectorAll("rect");
- m.forEach((x,i)=>{rs[i].addEventListener("mousemove",e=>showTip(e,x.model+" · "+x.calls+" "+T("times_unit")+" · "+T("legend_est")+fmt(x.est)+" "+T("legend_real")+fmt(x.real)));rs[i].addEventListener("mouseleave",hideTip);});
+  const el=document.getElementById("barChart");const m=DATA.models.slice(0,10);
+  if(!m.length){el.innerHTML='<div class="empty">'+T("empty_range")+'</div>';return;}
+  const W=el.clientWidth||520;
+  const top=8,barH=14,gap=10,padL=10;
+  const labelColW=Math.min(Math.round(W*0.40),180);
+  const maxChars=Math.max(4,Math.floor((labelColW-8)/6.2));
+  const barX=padL+labelColW+8, padR=62, plotW=Math.max(40,W-barX-padR);
+  const H=top+m.length*(barH+gap)+4;
+  const max=Math.max(1,...m.map(x=>x.est+x.real));
+  const ramp=["#185FA5","#378ADD","#378ADD","#85B7EB","#85B7EB","#B5D4F4","#B5D4F4","#B5D4F4","#B5D4F4","#B5D4F4"];
+  let grid="";[0,.25,.5,.75,1].forEach(t=>{const gx=barX+plotW*t;grid+=`<line x1="${gx.toFixed(1)}" y1="${top}" x2="${gx.toFixed(1)}" y2="${H-4}" stroke="var(--line)" stroke-width="1" opacity="0.55"/>`;});
+  let rows="";
+  m.forEach((x,i)=>{const y=top+i*(barH+gap);const w=Math.max(2,plotW*(x.est+x.real)/max);const c=ramp[i]||"#B5D4F4";
+    const nm=x.model.length>maxChars?x.model.slice(0,maxChars-1)+"…":x.model;
+    rows+=`<g><text x="${barX-8}" y="${y+barH/2+4}" text-anchor="end" font-size="11" fill="var(--ink)">${esc(nm)}</text>`
+      +`<rect x="${barX}" y="${y}" width="${w.toFixed(1)}" height="${barH}" rx="4" fill="${c}"><title>${esc(x.model)} · ${x.calls} ${T("times_unit")} · ${T("legend_est")}${fmt(x.est)} ${T("legend_real")}${fmt(x.real)}</title></rect></g>`;});
+  let vals="";
+  m.forEach((x,i)=>{const y=top+i*(barH+gap);vals+=`<text x="${W-8}" y="${y+barH/2+4}" text-anchor="end" font-size="11" fill="var(--muted)">${fmt(x.est+x.real)}</text>`;});
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${grid}${rows}${vals}</svg>`;
+  const rs=el.querySelectorAll("rect");
+  m.forEach((x,i)=>{rs[i].addEventListener("mousemove",e=>showTip(e,x.model+" · "+x.calls+" "+T("times_unit")+" · "+T("legend_est")+fmt(x.est)+" "+T("legend_real")+fmt(x.real)));rs[i].addEventListener("mouseleave",hideTip);});
 }
 function renderDonut(){
- const el=document.getElementById("donut");const md=DATA.mods;
- const tot=md.reduce((a,b)=>a+b.calls,0);
- if(!tot){el.innerHTML='<div class="empty">'+T("empty_mods")+'</div>';return;}
- const W=200,R=80,C=100;let ang=-Math.PI/2;let segs="";let leg="";
- md.forEach(x=>{const a2=ang+2*Math.PI*x.calls/tot;const large=(a2-ang)>Math.PI?1:0;
-   const x1=C+R*Math.cos(ang),y1=C+R*Math.sin(ang),x2=C+R*Math.cos(a2),y2=C+R*Math.sin(a2);
-   segs+=`<path d="M${C},${C} L${x1},${y1} A${R},${R} 0 ${large} 1 ${x2},${y2} Z" fill="${MOD_COLOR[x.mod]||'var(--other)'}"><title></title></path>`;
-   leg+=`<div><i style="background:${MOD_COLOR[x.mod]||'var(--other)'}"></i>${modLabel(x.mod)} ${x.calls} (${(100*x.calls/tot).toFixed(0)}%)</div>`;
-   ang=a2;});
- el.innerHTML=`<div style="display:flex;gap:12px;align-items:center"><svg viewBox="0 0 200 200" style="width:160px;height:160px">${segs}<circle cx="100" cy="100" r="42" fill="var(--card)"/></svg><div class="legend" style="flex-direction:column">${leg}</div></div>`;
- const ps=el.querySelectorAll("path");
- md.forEach((x,i)=>{ps[i].addEventListener("mousemove",e=>showTip(e,modLabel(x.mod)+" "+x.calls+" "+T("times_unit")+" · "+T("legend_est")+fmt(x.est)));ps[i].addEventListener("mouseleave",hideTip);});
+  const el=document.getElementById("donut");const md=DATA.mods;
+  const tot=md.reduce((a,b)=>a+b.calls,0);
+  if(!tot){el.innerHTML='<div class="empty">'+T("empty_mods")+'</div>';return;}
+  const W=200,R=80,C=100;let ang=-Math.PI/2;let segs="";let leg="";
+  md.forEach(x=>{const a2=ang+2*Math.PI*x.calls/tot;const large=(a2-ang)>Math.PI?1:0;
+    const x1=C+R*Math.cos(ang),y1=C+R*Math.sin(ang),x2=C+R*Math.cos(a2),y2=C+R*Math.sin(a2);
+    segs+=`<path d="M${C},${C} L${x1},${y1} A${R},${R} 0 ${large} 1 ${x2},${y2} Z" fill="${MOD_COLOR[x.mod]||'var(--other)'}"><title></title></path>`;
+    leg+=`<div><i style="background:${MOD_COLOR[x.mod]||'var(--other)'}"></i>${modLabel(x.mod)} ${x.calls} (${(100*x.calls/tot).toFixed(0)}%)</div>`;
+    ang=a2;});
+  el.innerHTML=`<div style="display:flex;gap:12px;align-items:center"><svg viewBox="0 0 200 200" style="width:160px;height:160px">${segs}<circle cx="100" cy="100" r="42" fill="var(--card)"/></svg><div class="legend" style="flex-direction:column">${leg}</div></div>`;
+  const ps=el.querySelectorAll("path");
+  md.forEach((x,i)=>{ps[i].addEventListener("mousemove",e=>showTip(e,modLabel(x.mod)+" "+x.calls+" "+T("times_unit")+" · "+T("legend_est")+fmt(x.est)));ps[i].addEventListener("mouseleave",hideTip);});
 }
 function renderOff(){
   const el=document.getElementById("offInfo");const d=(DATA.server&&DATA.server.dashboard)||null;const b=DATA.server&&DATA.server.balance;
@@ -533,68 +704,100 @@ function renderOff(){
   if(DATA.server&&DATA.server.fetched_at) html+=`<div class="sub" style="margin-top:8px">${T("off_fetched",{t:DATA.server.fetched_at})}</div>`;
   el.innerHTML=html;
 }
-function renderTable(){
- const tb=document.querySelector("#tbl tbody");
- const btn=document.getElementById("tblToggle");
- const cnt=document.getElementById("tblCount");
- if(!DATA.recent.length){tb.innerHTML='<tr><td colspan="9" class="empty">'+T("tbl_empty")+'</td></tr>';if(btn)btn.style.display="none";if(cnt)cnt.textContent="";return;}
- const all=__tblAll;
- const rows=all?DATA.recent:DATA.recent.slice(0,200);
- tb.innerHTML=rows.map(r=>`<tr>
-  <td>${r.ts}</td><td>${r.model}</td><td>${modLabel(r.mod)}</td>
-  <td>${r.sec??"-"}</td><td>${r.res??"-"}</td>
-  <td><span class="tag ${r.status==='success'?'t-succ':r.status==='failed'?'t-fail':'t-unk'}">${r.status}</span></td>
-  <td>${r.est==null?'-':"$"+Number(r.est).toFixed(4)}</td>
-  <td>${r.real==null?'-':"$"+Number(r.real).toFixed(4)}</td>
-  <td><span class="tag ${r.src==='server'?'t-srv':r.src==='workbuddy'?'t-wb':'t-log'}">${r.src}</span></td></tr>`).join("");
- if(cnt)cnt.textContent=all?T("tbl_showing_all",{n:DATA.recent.length}):T("tbl_showing",{a:rows.length,b:DATA.recent.length});
- if(btn){
-  if(DATA.recent.length>200){btn.style.display="inline-block";btn.textContent=all?T("tbl_show_less"):T("tbl_show_all",{n:DATA.recent.length});}
-  else btn.style.display="none";
- }
-}
 function renderKeys(){
-  const el=document.getElementById("keyInfo");const keys=(DATA.conv&&DATA.conv.keys)||[];
+  const el=document.getElementById("keyInfo");
+  const keys=DATA.keys||[];
   if(!keys.length){el.innerHTML='<div class="empty">'+T("key_empty")+'</div>';return;}
-  const rows=keys.map(kk=>`<tr><td><code>${kk.key}</code></td><td style="text-align:right">${kk.calls}</td>
+  const rows=keys.map(kk=>`<tr><td><code>${esc(kk.key)}</code></td><td style="text-align:right">${kk.calls}</td>
     <td style="text-align:right"><b>$${Number(kk.amount).toFixed(4)}</b></td>
-    <td style="text-align:right">${kk.quota}</td>
-    <td>${(kk.models||[]).map(m=>m[0]).join(", ").slice(0,40)}</td>
-    <td>${kk.last||"-"}</td></tr>`).join("");
-  el.innerHTML=`<div class="scroll"><table><thead><tr><th>${T("key_hdr_model")}</th><th style="text-align:right">${T("key_hdr_calls")}</th><th style="text-align:right">${T("key_hdr_amt")}</th><th style="text-align:right">${T("key_hdr_quota")}</th><th>${T("key_hdr_models")}</th><th>${T("key_hdr_last")}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    <td>${(kk.models||[]).map(m=>m[0]).join(", ")}</td></tr>`).join("");
+  el.innerHTML=`<div class="scroll"><table><thead><tr><th>${T("key_hdr_model")}</th><th style="text-align:right">${T("key_hdr_calls")}</th><th style="text-align:right">${T("key_hdr_amt")}</th><th>${T("key_hdr_models")}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
-function renderConv(){
-  const el=document.getElementById("convInfo");const c=DATA.conv||{};
-  const s=c.stat, t=c.totals||{}, sess=c.sessions||[];
-  if(!s){el.innerHTML='<div class="empty">'+T("conv_empty")+'</div>';return;}
-  let html=`<div class="kpis" style="margin-bottom:12px">
-   <div class="kpi"><div class="v">${s.match_rate}%</div><div class="l">${T("conv_match")}</div></div>
-   <div class="kpi"><div class="v">$${Number(t.matched_amount||0).toFixed(2)}</div><div class="l">${T("conv_matched")}</div></div>
-   <div class="kpi"><div class="v">$${Number(t.unmatched_amount||0).toFixed(2)}</div><div class="l">${T("conv_other")}</div></div>
-  </div>
-  <div class="sub" style="margin-bottom:8px">${T("conv_method",{w:s.window,m:s.dt_median})}</div>`;
-  const rows=sess.slice(0,15).map(x=>`<tr><td>${x.first||"-"}</td><td title="${(x.cwd||'').replace(/"/g,'')}">${(x.cwd||"-").split(String.fromCharCode(92)).pop()||"-"}</td>
-    <td><code>${(x.session||"").slice(0,8)}</code></td><td style="text-align:right">${x.calls}</td>
-    <td style="text-align:right"><b>$${Number(x.amount).toFixed(4)}</b></td>
-    <td>${(x.models||[]).map(m=>m[0]).join(", ").slice(0,32)}</td></tr>`).join("");
-  html+=`<div class="scroll"><table><thead><tr><th>${T("th_time")}</th><th>${T("th_mod")}</th><th>${T("th_status")}</th><th style="text-align:right">${T("key_hdr_calls")}</th><th style="text-align:right">${T("key_hdr_amt")}</th><th>${T("cat_hdr_model")}</th></tr></thead><tbody>${rows||'<tr><td colspan="6" class="empty">-</td></tr>'}</tbody></table></div>`;
-  if(c.generated) html+=`<div class="sub" style="margin-top:8px">${T("conv_top")} · ${c.generated}</div>`;
-  el.innerHTML=html;
+function renderTable(){
+  const tb=document.querySelector("#tbl tbody");
+  const btn=document.getElementById("tblToggle");
+  const cnt=document.getElementById("tblCount");
+  const recs=rangeRecords().slice().sort((a,b)=>b.ts-a.ts);
+  if(!recs.length){tb.innerHTML='<tr><td colspan="9" class="empty">'+T("tbl_empty")+'</td></tr>';if(btn)btn.style.display="none";if(cnt)cnt.textContent="";return;}
+  const all=__tblAll;
+  const rows=all?recs:recs.slice(0,200);
+  tb.innerHTML=rows.map(r=>`<tr>
+   <td>${timeStr(r.ts)}</td><td>${esc(r.model)}</td><td>${modLabel(r.modality)}</td>
+   <td>${r.seconds??"-"}</td><td>${r.resolution??"-"}</td>
+   <td><span class="tag ${r.status==='success'?'t-succ':r.status==='failed'?'t-fail':'t-unk'}">${r.status}</span></td>
+   <td>-</td>
+   <td>${r.cost_real==null?'-':"$"+Number(r.cost_real).toFixed(4)}</td>
+   <td><span class="tag ${r.source==='server'?'t-srv':'t-log'}">${r.source}</span></td></tr>`).join("");
+  if(cnt)cnt.textContent=all?T("tbl_showing_all",{n:recs.length}):T("tbl_showing",{a:rows.length,b:recs.length});
+  if(btn){
+   if(recs.length>200){btn.style.display="inline-block";btn.textContent=all?T("tbl_show_less"):T("tbl_show_all",{n:recs.length});}
+   else btn.style.display="none";
+  }
 }
-function renderCatalog(){
- const el=document.getElementById("catalogBody");const c=DATA.catalog;
- if(!c){document.getElementById("catalogCard").style.display="none";return;}
- const rows=c.slice(0,40).map(m=>`<tr><td>${m.id||m.name||'-'}</td><td>${(m.type||m.modality||'-')}</td><td>${(m.priced?'✔':'-')}</td></tr>`).join("");
- el.innerHTML=`<table><thead><tr><th>${T("cat_hdr_model")}</th><th>${T("cat_hdr_type")}</th><th>${T("cat_hdr_price")}</th></tr></thead><tbody>${rows}</tbody></table><div class="sub">${T("catalog_note")}</div>`;
+function renderAttr(){
+  const el=document.getElementById("attrInfo");
+  el.innerHTML=`<div class="locked">
+    <div class="big">🔒</div>
+    <h3 style="margin:0;font-size:15px;color:var(--ink)">${T("attr_locked_title")}</h3>
+    <p>${T("attr_locked_body")}</p>
+    <span class="pill">${T("tab_attr")} · ${T("tab_settings")==="设置"?"仅在混合版 skill":"hybrid skill only"}</span>
+  </div>`;
 }
 function renderSrc(){
- const n=DATA.server_n||0;
- document.getElementById("srcInfo").innerHTML=T("src_txt",{n:n, wb:k.wb, log:k.log})+(n?(" "+T("src_auth")):(" "+T("src_no")));
+  const n=DATA.server_n||0;
+  document.getElementById("srcInfo").innerHTML=T("src_txt",{n:n, wb:k.wb, log:k.log})+(n?(" "+T("src_auth")):(" "+T("src_no")));
+}
+function renderSettings(){
+  const sEl=document.getElementById("sinceInput");
+  const s=sEl && sEl.value;
+  const ce=document.getElementById("setSinceTxt"); if(ce) ce.textContent=T("set_since_txt",{s:s||"2025-01-01"});
+  const cc=document.getElementById("setCacheTxt"); if(cc) cc.textContent=T("set_cache_txt");
 }
 function renderAllPages(){
   document.getElementById("sub").textContent=T("sub_generated",{g:DATA.generated,n:DATA.kpi.calls});
-  renderFbar();renderAccounts();renderAll();renderBar();renderDonut();renderOff();renderTable();renderKeys();renderConv();renderCatalog();renderSrc();updateGuide();applyI18n();
+  renderFbar();renderAccounts();renderAll();renderBar();renderDonut();renderOff();renderTable();renderKeys();renderAttr();renderSrc();renderSettings();updateGuide();applyI18n();updateCustomBounds();
 }
+// ---- tab switching (Direction A) ----
+function showTab(name){
+  currentTab=name;
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));
+  document.querySelectorAll(".sec").forEach(s=>s.classList.toggle("on",s.id==="sec-"+name));
+  renderTab(name);
+}
+function renderTab(name){
+  if(name==="overview"){ renderAll(); renderBar(); renderOff(); renderKeys(); }
+  else if(name==="model"){ const F=filtered(); renderHourGrid(F); renderRidge(F); renderHourlyModel(F); renderDailyModel(F); }
+  else if(name==="detail"){ renderTable(); }
+  else if(name==="attr"){ renderAttr(); }
+  else if(name==="settings"){ renderSettings(); }
+}
+function applyCustom(){ customStart=(document.getElementById("cStart").value||""); customEnd=(document.getElementById("cEnd").value||""); if(customStart&&customEnd){ customActive=true; renderAllPages(); } }
+function clearCustom(){ customActive=false; customStart=""; customEnd=""; renderAllPages(); }
+// constrain the custom date inputs to the fetched data span, and prefill with earliest/latest day
+function updateCustomBounds(){
+  const rs=DATA.records||[]; if(!rs.length) return;
+  let mn=Infinity,mx=-Infinity;
+  for(let i=0;i<rs.length;i++){ const t=rs[i].ts; if(t<mn)mn=t; if(t>mx)mx=t; }
+  const mnD=dayOf(mn), mxD=dayOf(mx);
+  const cs=document.getElementById("cStart"), ce=document.getElementById("cEnd");
+  if(!cs||!ce) return;
+  cs.min=mnD; cs.max=mxD; ce.min=mnD; ce.max=mxD;
+  cs.title=mnD+" ~ "+mxD; ce.title=mnD+" ~ "+mxD;
+  if(!cs.value) cs.value=mnD;
+  if(!ce.value) ce.value=mxD;
+}
+function csvCell(v){const s=String(v==null?"":v);return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
+function exportCSV(){
+  const recs=rangeRecords().slice().sort((a,b)=>b.ts-a.ts);
+  if(!recs.length){ setStatus("No data in current range"); return; }
+  const head=["time","model","modality","seconds","resolution","status","real_usd","source","api_key","note"];
+  const lines=[head.join(",")];
+  recs.forEach(r=>lines.push([timeStr(r.ts),r.model,r.modality,r.seconds??"",r.resolution??"",r.status,r.cost_real??"",r.source,r.api_key||"",(r.note||"").replace(/[",\n]/g," ")].map(csvCell).join(",")));
+  const blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="pt-usage-"+(new Date().toISOString().slice(0,10))+".csv";a.click();URL.revokeObjectURL(a.href);
+  setStatus("Exported "+recs.length+" rows to CSV");
+}
+function clearCache(){ try{ localStorage.removeItem(CACHE_KEY); localStorage.removeItem("ptdash_token"); }catch(e){} tokenEl.value=""; setStatus("Cache & token cleared"); }
 function toggleTheme(){const b=document.body;const n=b.getAttribute("data-theme")==="dark"?"light":"dark";b.setAttribute("data-theme",n);localStorage.setItem("ptdash_theme",n);}
 function toggleLang(){LANG=(LANG==="zh")?"en":"zh";localStorage.setItem("ptdash_lang",LANG);renderAllPages();}
 // tooltip
@@ -603,7 +806,7 @@ function showTip(e,t){tip.textContent=t;tip.style.opacity=1;tip.style.left=(e.cl
 function hideTip(){tip.style.opacity=0;}
 (function(){const t=localStorage.getItem("ptdash_theme");if(t)document.body.setAttribute("data-theme",t);})();
 // re-render charts at real container width on resize (prevents SVG viewBox stretch / oversized fonts)
-let _rzT; window.addEventListener("resize",()=>{clearTimeout(_rzT);_rzT=setTimeout(()=>{try{renderAll();renderBar();}catch(e){}},150);});
+let _rzT; window.addEventListener("resize",()=>{clearTimeout(_rzT);_rzT=setTimeout(()=>{try{renderTab(currentTab);}catch(e){}},150);});
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 renderAllPages();
 
@@ -650,7 +853,8 @@ function normalize(it){
   return {ts, model, modality:mod, seconds:secs, resolution:res,
           tin:tin||0, tout:tout||0, status:it.status||"unknown",
           cost_est:null, cost_real:(typeof amount==="number")?amount:null,
-          note:(it.consume_id||"").slice(0,24), source:"server", account:"default"};
+          note:(it.consume_id||"").slice(0,24), source:"server", account:"default",
+          api_key:(it.api_key_masked||it.api_key||"-")};
 }
 
 // Aggregate canonical recs (mirrors aggregate())
@@ -678,33 +882,40 @@ function nowStr(){ const d=new Date(); const p=n=>String(n).padStart(2,"0"); ret
 
 // Build the exact DATA shape the render engine expects
 function buildData(serverRecs, balance, dashboard, rank){
-  const recsSorted=serverRecs.filter(r=>r.ts).slice().sort((a,b)=>a.ts-b.ts).reverse();
   const agg=aggregate(serverRecs);
   const days=Object.keys(agg.by_day).sort();
   const daily=days.map(d=>({day:d, est:r4(agg.by_day[d].est), real:r4(agg.by_day[d].real), calls:agg.by_day[d].calls}));
   const model_rows=Object.entries(agg.by_model).sort((a,b)=>(b[1].est+b[1].real)-(a[1].est+a[1].real));
   const mod_rows=Object.entries(agg.by_mod).sort((a,b)=>(b[1].est+b[1].real)-(a[1].est+a[1].real));
   const SRC={server:0,logger:1,workbuddy:2};
+  const recsSorted=serverRecs.filter(r=>r.ts).slice().sort((a,b)=>a.ts-b.ts).reverse();
   const recs_compact=serverRecs.filter(r=>r.ts).map(r=>[int0(r.ts), r.model, int0(r.tin), int0(r.tout),
       r6(r.cost_real||0), 0, SRC[r.source]||0, r.account||"default"]);
-  const recent=recsSorted.map(r=>({ts:timeStr(r.ts), model:r.model, mod:r.modality, sec:r.seconds, res:r.resolution,
-      status:r.status, est:null, real:r.cost_real, src:r.source, note:r.note||""}));
   const kpi={calls:serverRecs.length, est:r4(agg.total_est), real:r4(agg.total_real), est_n:agg.est_n, real_n:agg.real_n,
       top_model: model_rows[0]?model_rows[0][0]:"-", wb:0, log:0};
+  // ---- By API Key aggregation (online-capable: api_key_masked is in the fetched records) ----
+  const keyMap={};
+  serverRecs.forEach(r=>{ const kk=r.api_key||"-"; const b=keyMap[kk]||(keyMap[kk]={calls:0,amount:0,models:{}}); b.calls++; b.amount+=(r.cost_real||0); if(r.model) b.models[r.model]=(b.models[r.model]||0)+1; });
+  const keys=Object.entries(keyMap).map(([kk,v])=>({
+      key:kk, calls:v.calls, amount:v.amount,
+      models:Object.entries(v.models).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([m,c])=>[m,c])
+    })).sort((a,b)=>b.amount-a.amount);
   return {
     generated: nowStr(), kpi,
     daily,
     models: model_rows.map(([kk,v])=>({model:kk,calls:v.calls,est:r4(v.est),real:r4(v.real),mod:v.mod})),
     mods: mod_rows.map(([kk,v])=>({mod:kk,calls:v.calls,est:r4(v.est),real:r4(v.real)})),
-    recent,
+    recent: recsSorted.map(r=>({ts:timeStr(r.ts), model:r.model, mod:r.modality, sec:r.seconds, res:r.resolution,
+      status:r.status, est:null, real:r.cost_real, src:r.source, note:r.note||""})),
     catalog:null, price_keys:[],
     server:{fetched_at:nowStr(), balance, dashboard, rank},
     recs:recs_compact, accounts:[], server_n:serverRecs.length,
-    conv:{stat:null,totals:null,keys:[],sessions:[],cwd:[],generated:null}
+    conv:{stat:null,totals:null,keys:[],sessions:[],cwd:[],generated:null},
+    records: serverRecs, keys
   };
 }
 
-function setData(d){ DATA=d; RECS=d.recs||[]; k=d.kpi; activeAccount="__all__"; activeDays=0; renderAllPages(); }
+function setData(d){ DATA=d; RECS=d.recs||[]; k=d.kpi; activeAccount="__all__"; activeDays=0; customActive=false; customStart=""; customEnd=""; showTab("overview"); renderAllPages(); }
 
 // ---- token persistence ----
 const tokenEl=document.getElementById("tokenInput");
@@ -813,7 +1024,7 @@ function showProgress(msg, cur, total){
 function hideProgress(){ const pg=document.getElementById("progress"); if(pg) pg.classList.remove("on"); }
 function showSkeleton(){
   const sk='<div class="skeleton sk-block"></div>';
-  ["lineChart","donut","barChart","hourGrid","ridge","hourlyModel","dailyModel","offInfo","keyInfo","convInfo","catalogBody"].forEach(id=>{
+  ["lineChart","donut","barChart","hourGrid","ridge","hourlyModel","dailyModel","offInfo","keyInfo","attrInfo"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.innerHTML=sk;
   });
   const tb=document.querySelector("#tbl tbody"); if(tb) tb.innerHTML='<tr><td colspan="9"><div class="skeleton sk-block" style="height:200px"></div></td></tr>';
@@ -837,7 +1048,7 @@ function animateNum(el, to, f, dur){
   }
   requestAnimationFrame(step);
 }
-function updateGuide(){ const g=document.getElementById("guide"); if(g) g.style.display=(!getToken()&&DATA.recs.length===0)?"block":"none"; }
+function updateGuide(){ const g=document.getElementById("guide"); if(g) g.style.display=(!getToken()&&DATA.records.length===0)?"block":"none"; }
 function hideGuide(){ const g=document.getElementById("guide"); if(g) g.style.display="none"; }
 
 async function fetchAllRecords(token, since, now){
@@ -954,7 +1165,7 @@ function buildDemo(){
       resolution:m.mod==="video"?"720P":(m.mod==="image"?"1024x1024":null),
       tin:Math.floor(rnd()*2000)+100, tout:Math.floor(rnd()*4000)+200,
       status:"success", cost_est:null, cost_real:amount||null,
-      note:"demo"+i, source:"server", account:"default"});
+      note:"demo"+i, source:"server", account:"default", api_key:"pt-****"+(1000+Math.floor(rnd()*8999))});
   }
   const balance={credits:128450, equal_usd:"12.8450"};
   const dashboard={top_data:{spend_usd:18.73, requests:N, success_rate:"100%"}};
@@ -963,11 +1174,13 @@ function buildDemo(){
 }
 function runDemo(){ setData(buildDemo()); setStatus("Demo data loaded (sample, not real). Click Load with your token for live data."); }
 
-// ---- boot: prefill saved token ----
+// ---- boot: prefill saved token + wire tab nav ----
 (function(){
   const saved=getToken();
   if(saved) tokenEl.value=saved;
+  document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
   if(new URLSearchParams(location.search).get("demo")==="1"){ runDemo(); }
+  showTab("overview");
 })();
 </script>
 <div class="overlay" id="overlay">
