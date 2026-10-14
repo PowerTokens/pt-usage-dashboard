@@ -11,20 +11,29 @@
   <img src="https://img.shields.io/badge/language-English%20%7C%20%E4%B8%AD%E6%96%87-orange" alt="EN / 中文">
 </p>
 
-把你（或你的团队）在 [PowerTokens](https://www.powertokens.ai) 上调过的模型消耗，生成一张**单文件离线 HTML 看板**——KPI、按模型/按天/按模态成本趋势、调用明细全都有，**零外部依赖、可邮件转发、可进汇报**。
+把你（或你的团队）在 [PowerTokens](https://www.powertokens.ai?utm_source=github&utm_medium=readme&utm_campaign=pt-usage-dashboard) 上调过的模型消耗，生成一张**单文件离线 HTML 看板**——KPI、按模型/按天/按模态成本趋势、调用明细全都有，**零外部依赖、可邮件转发、可进汇报**。
 
 数据来源是 PT **网页控制台的私有接口**（逐笔精确 amount / quota / token），不靠估算。只要你能登录 PT 网页、复制一个 Cookie，就能拉到你账号的全部历史消耗。
 
+<p align="center">
+  <a href="https://powertokens.github.io/pt-usage-dashboard/?utm_source=github&utm_medium=readme&utm_campaign=pt-usage-dashboard"><b>▶ 在线网页版（推荐）— 零安装，粘贴 <code>_Bearer</code> Cookie 即可</b></a>
+</p>
+
+控制台私有接口已对浏览器开放 CORS：网页版在你本机浏览器里直连 `powertokens.ai`，token 只存在本机 `localStorage`。
+
+▶ **https://powertokens.github.io/pt-usage-dashboard/?utm_source=github&utm_medium=readme&utm_campaign=pt-usage-dashboard**
+
 ---
 
-## 这个仓库有两种用法
+## 这个仓库有三种用法
 
 | 用法 | 适合谁 | 怎么用 |
 |---|---|---|
-| **① 当作 GitHub 上的独立 Python 工具** | 任何用 PT 的人（不限客户端） | 克隆仓库 → 装好 Python → 跑两条命令出 HTML |
+| **🌐 在线网页版（推荐）** | 任何人，零安装 | 打开 [在线看板](https://powertokens.github.io/pt-usage-dashboard/?utm_source=github&utm_medium=readme&utm_campaign=pt-usage-dashboard) → 粘贴 `_Bearer` → 完成 |
+| **① 当作独立 Python 工具** | 任何用 PT 的人（不限客户端） | 克隆仓库 → 装好 Python → 跑两条命令出 HTML |
 | **② 当作 WorkBuddy skill 安装** | WorkBuddy 用户 | 把本目录放进 `~/.workbuddy/skills/`，对话里说"看看我的 PT 用量"即可触发 |
 
-两种方式共用同一套 `scripts/*.py`，逻辑完全一致。下面以①为主说明，②在文末补充。
+网页版与 Python 工具共用同一数据源与图表。最快路径是网页版；①/② 适合要离线 HTML 或本机自动化的场景。下面以①为主说明，②在文末补充。
 
 > **先说清楚本质：** 本仓库就是一组**纯标准库 Python 脚本**，靠终端执行。任何能给你一个 Shell / 终端的 agent 或编辑器都能直接跑——Trae、Cursor、VS Code、dsh、Claude Code、Codex，甚至系统自带的 PowerShell / bash 都行，**和 WorkBuddy 没有绑定关系**。唯一和 WorkBuddy 强绑定的只有"调用↔对话归因"那一项（要读 WB 本地日志）。
 
@@ -89,7 +98,7 @@ run.bat           # Windows
 也可以直接跑：`python3 serve.py`（可加 `--port 9000`、`--no-open`、`--lang en|zh`）。
 
 > **隐私：** 只监听 `127.0.0.1` 本机。token 只写进你本机的 `config.json`，只发给 `powertokens.ai`，不会给任何第三方。
-> **为什么不能做成在线网页？** 用量数据在 PT 的私有控制台接口后面，浏览器直连会被 CORS + Cookie 鉴权挡住，必须有本机这一层。所以这是能达到的、最接近"打开网页就能用"的形态。
+> **更想零安装？** 用[在线网页版](https://powertokens.github.io/pt-usage-dashboard/?utm_source=github&utm_medium=readme&utm_campaign=pt-usage-dashboard)即可——浏览器直连 PT 控制台接口（CORS 已开放），粘贴 `_Bearer` 就能拉数。下面的本地控制台适合要离线 HTML / 多账号 CLI 的场景。
 
 > **还是想用命令行？** `./run.sh cli`（或 `run.bat cli`）走上面那两条命令。
 
@@ -219,4 +228,4 @@ run.bat           # Windows
 
 ## License
 
-[MIT](./LICENSE) © 2026 tjj1234
+[MIT](./LICENSE) © 2026 PowerTokens · 原作者 [tjj1234](https://github.com/tjj1234)

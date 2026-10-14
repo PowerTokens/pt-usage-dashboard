@@ -11,12 +11,12 @@
   <img src="https://img.shields.io/badge/language-English%20%7C%20%E4%B8%AD%E6%96%87-orange" alt="EN / 中文">
 </p>
 
-Generate a **single-file offline HTML dashboard** of your (or your team's) model spend on [PowerTokens](https://www.powertokens.ai) — KPIs, cost trends by model / day / modality, and call details — **zero external dependencies, email-friendly, presentation-ready**.
+Generate a **single-file offline HTML dashboard** of your (or your team's) model spend on [PowerTokens](https://www.powertokens.ai?utm_source=github&utm_medium=readme&utm_campaign=pt-usage-dashboard) — KPIs, cost trends by model / day / modality, and call details — **zero external dependencies, email-friendly, presentation-ready**.
 
 Data comes from PT's **private console API** (per-call exact amount / quota / token), not estimates. As long as you can log into PT in a browser and copy one Cookie, you can pull your entire account history.
 
 <p align="center">
-  <a href="https://tjj1234.github.io/pt-usage-dashboard/?utm_source=github&utm_medium=readme&utm_campaign=pt-usage-dashboard"><b>▶ Try the live web app — no install, just paste your <code>_Bearer</code> cookie</b></a>
+  <a href="https://powertokens.github.io/pt-usage-dashboard/?utm_source=github&utm_medium=readme&utm_campaign=pt-usage-dashboard"><b>▶ Try the live web app — no install, just paste your <code>_Bearer</code> cookie</b></a>
 </p>
 
 ---
@@ -39,7 +39,7 @@ The web app and the Python tool share the same data source and charts. The web a
 
 No Python, no clone, no terminal. Open the link, paste your `_Bearer` cookie, and it fetches your full history right in the browser.
 
-▶ **https://tjj1234.github.io/pt-usage-dashboard/?utm_source=github&utm_medium=readme&utm_campaign=pt-usage-dashboard**
+▶ **https://powertokens.github.io/pt-usage-dashboard/?utm_source=github&utm_medium=readme&utm_campaign=pt-usage-dashboard**
 
 ### How to get your `_Bearer` cookie (≈1 minute)
 
@@ -120,7 +120,7 @@ In the page you can:
 Or run it directly: `python3 serve.py` (add `--port 9000`, `--no-open`, `--lang en|zh`).
 
 > **Privacy:** the server binds to `127.0.0.1` only. Your token is written to your local `config.json` and sent only to `powertokens.ai`. Nothing leaves your machine to any third party.
-> **Why not a hosted page?** The usage data lives behind PowerTokens' private console API, which a browser cannot call directly (CORS + cookie auth). A local helper is unavoidable — this is as close to "just open a page" as it can get.
+> **Prefer zero install?** Use the [live web app](https://powertokens.github.io/pt-usage-dashboard/?utm_source=github&utm_medium=readme&utm_campaign=pt-usage-dashboard) — it calls PT's console API **directly from the browser** (CORS-open) after you paste `_Bearer`. The local console below is optional if you want offline HTML / multi-account CLI workflows.
 
 > **Prefer the command line?** `./run.sh cli` (or `run.bat cli`) runs the two-command flow above.
 
@@ -250,4 +250,4 @@ Section ① is the universal path anyone can use. If you happen to be a WorkBudd
 
 ## License
 
-[MIT](./LICENSE) © 2026 tjj1234
+[MIT](./LICENSE) © 2026 PowerTokens · Created by [tjj1234](https://github.com/tjj1234)
