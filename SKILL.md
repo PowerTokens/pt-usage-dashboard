@@ -87,11 +87,11 @@ python <skill目录>/serve.py --port 8777 --lang zh
 | 没 token 看不到效果 | **「先看示例看板」**按钮，内置 45 天样例数据；看板顶部有橙色「示例数据」横幅防混淆 |
 | token 过期报错看不懂 | 401 翻译成人话：「登录已过期（约 3 天失效）。请重新打开 PT 网页登录，复制 Cookie `_Bearer` 的值，粘贴到下面重新拉取。」 |
 
-技术说明（不要试图改成纯静态托管页）：
+技术说明：
 
 - 控制台 `serve.py` 直接 **import 复用** `fetch_pt_server.PTConsole` / `fetch_all_records` 与 `gen_dashboard.render_html`，缓存格式与渲染管线跟命令行版**完全一致**，数据不会有任何偏差。
 - **只监听 `127.0.0.1`**，token 只写本机、只发给 powertokens.ai，不外发。
-- 因为用的是 `www.powertokens.ai/api` **私有 cookie 接口**，浏览器直连会被 CORS + 跨源 cookie 挡住，**必须**有本机服务这一层做代理。这点与官方 `video-studio-web`（浏览器直连 `api.powertokens.ai/v1`，CORS 允许）不同，**无法做成"发个链接别人直接打开"的在线网页**。
+- 也可用 GitHub Pages 在线网页版（浏览器直连 `www.powertokens.ai/api`，CORS 已开放，用户粘贴 `_Bearer`）：https://powertokens.github.io/pt-usage-dashboard/?utm_source=github&utm_medium=readme&utm_campaign=pt-usage-dashboard。本机 `serve.py` 仍适合离线 HTML / 多账号 CLI / WorkBuddy skill 场景。
 
 ---
 
