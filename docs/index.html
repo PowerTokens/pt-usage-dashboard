@@ -559,32 +559,39 @@ function renderRidge(F){
   let lo=Infinity,hi=0;
   mods.forEach(m=>byM[m].forEach(v=>{if(v<lo)lo=v;if(v>hi)hi=v;}));
   lo=Math.log10(1+lo);hi=Math.log10(1+hi);
-  const W=(el.clientWidth||520),H=mods.length*36+34,padL=108,padR=100,padT=10;
+  const W=(el.clientWidth||520),padL=108,padR=100,padT=10;
+  const rowH=Math.max(40,Math.min(110,Math.round(320/mods.length)));
+  const barMax=Math.min(64,Math.round(rowH*0.74));
+  const H=padT+mods.length*rowH+24;
   const plotW=W-padL-padR;
   const xw=v=>padL+plotW*(Math.log10(1+v)-lo)/((hi-lo)||1);
   let g="";
   mods.forEach((m,i)=>{
-   const vals=byM[m];const base=padT+i*36+30;
+   const vals=byM[m];
+   const rowTop=padT+i*rowH;
+   const base=rowTop+rowH-8;
+   const barTop=base-barMax;
    const p50=pct(vals,0.5),p90=pct(vals,0.9);
    const B=36;const hist=new Array(B).fill(0);
    vals.forEach(v=>{const b=Math.min(B-1,Math.floor((Math.log10(1+v)-lo)/((hi-lo)||1)*B));hist[b]++;});
    const hmax=Math.max(1,...hist);
    const rowTip=esc(m+" · "+vals.length+T("times_unit")+" · "+T("m_50")+" "+fmtTok(p50)+" · "+T("m_90")+" "+fmtTok(p90));
-   g+=`<rect x="${padL}" y="${base-30}" width="${plotW}" height="30" fill="transparent" data-tip="${rowTip}"></rect>`;
+   g+=`<rect x="${padL}" y="${rowTop}" width="${plotW}" height="${rowH-2}" fill="transparent" data-tip="${rowTip}"></rect>`;
    hist.forEach((c,b)=>{
     if(!c)return;
     const vlo=Math.pow(10,lo+(hi-lo)*b/B)-1, vhi=Math.pow(10,lo+(hi-lo)*(b+1)/B)-1;
     const x0=xw(vlo),x1=xw(vhi);
-    const h=26*c/hmax;
+    const h=barMax*c/hmax;
     const tip=esc(m+" · "+fmtTok(vlo)+"–"+fmtTok(vhi)+" tok · "+c+" "+T("times_unit"));
-    g+=`<rect x="${x0.toFixed(1)}" y="${(base-h).toFixed(1)}" width="${Math.max(1,x1-x0).toFixed(1)}" height="${h.toFixed(1)}" fill="${mColor(m)}" opacity="0.55" data-tip="${tip}"></rect>`;
+    g+=`<rect x="${x0.toFixed(1)}" y="${(base-h).toFixed(1)}" width="${Math.max(1,x1-x0).toFixed(1)}" height="${h.toFixed(1)}" fill="${mColor(m)}" opacity="0.5" data-tip="${tip}"></rect>`;
    });
-   g+=`<text x="${padL-6}" y="${base-8}" text-anchor="end" font-size="11" fill="var(--ink)">${m.slice(0,16)}</text>`;
-   g+=`<text x="${padL-6}" y="${base+5}" text-anchor="end" font-size="10" fill="var(--muted)">${vals.length}${T("times_unit")}</text>`;
-   g+=`<line x1="${xw(p50).toFixed(1)}" y1="${base-28}" x2="${xw(p50).toFixed(1)}" y2="${base}" stroke="var(--ink)" stroke-width="1" opacity="0.6"/>`;
-   g+=`<line x1="${xw(p90).toFixed(1)}" y1="${base-28}" x2="${xw(p90).toFixed(1)}" y2="${base}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 2"/>`;
-   g+=`<text x="${W-padR+6}" y="${base-12}" font-size="10" fill="var(--ink)">${T("m_50")} ${fmtTok(p50)}</text>`;
-   g+=`<text x="${W-padR+6}" y="${base+2}" font-size="10" fill="var(--muted)">${T("m_90")} ${fmtTok(p90)}</text>`;
+   g+=`<line x1="${xw(p50).toFixed(1)}" y1="${(barTop-2).toFixed(1)}" x2="${xw(p50).toFixed(1)}" y2="${base}" stroke="var(--ink)" stroke-width="1" opacity="0.6"/>`;
+   g+=`<line x1="${xw(p90).toFixed(1)}" y1="${(barTop-2).toFixed(1)}" x2="${xw(p90).toFixed(1)}" y2="${base}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 2"/>`;
+   const fs=Math.min(13,Math.max(11,Math.round(rowH/4)));
+   g+=`<text x="${padL-6}" y="${(base-6).toFixed(1)}" text-anchor="end" font-size="${fs}" fill="var(--ink)">${m.slice(0,16)}</text>`;
+   g+=`<text x="${padL-6}" y="${(base+10).toFixed(1)}" text-anchor="end" font-size="10" fill="var(--muted)">${vals.length}${T("times_unit")}</text>`;
+   g+=`<text x="${W-padR+6}" y="${(barTop-2).toFixed(1)}" font-size="10" fill="var(--ink)">${T("m_50")} ${fmtTok(p50)}</text>`;
+   g+=`<text x="${W-padR+6}" y="${(base-4).toFixed(1)}" font-size="10" fill="var(--muted)">${T("m_90")} ${fmtTok(p90)}</text>`;
   });
   el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${g}</svg><div class="sub">${T("ridge_note")}</div>`;
   el.querySelectorAll("[data-tip]").forEach(rc=>{
@@ -666,7 +673,7 @@ function renderAccounts(){
 function renderFbar(){
   const el=document.getElementById("fbar");
   el.innerHTML=RANGES.map(r=>`<button class="fb ${!customActive&&activeDays===r[0]?'on':''}" data-d="${r[0]}">${T(r[1])}</button>`).join("");
-  el.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{activeDays=+b.dataset.d;customActive=false;renderAllPages();}));
+  el.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{activeDays=+b.dataset.d;customActive=false;renderAllPages();syncDateInputs();}));
 }
 function renderAll(){
   const F=filtered();
@@ -826,7 +833,19 @@ function renderTab(name){
   else if(name==="settings"){ renderSettings(); }
 }
 function applyCustom(){ customStart=(document.getElementById("cStart").value||""); customEnd=(document.getElementById("cEnd").value||""); if(customStart&&customEnd){ customActive=true; renderAllPages(); } }
-function clearCustom(){ customActive=false; customStart=""; customEnd=""; renderAllPages(); }
+function clearCustom(){ customActive=false; customStart=""; customEnd=""; renderAllPages(); syncDateInputs(); }
+// mirror the currently effective range (pill OR custom) into the two date inputs,
+// display-only (filtering still runs off activeDays/customActive). Respects min/max.
+function earliestTs(){ const rs=DATA.records||[]; if(!rs.length) return 0; let mn=Infinity; for(let i=0;i<rs.length;i++){ if(rs[i].ts<mn)mn=rs[i].ts; } return mn; }
+function syncDateInputs(){
+  const cs=document.getElementById("cStart"), ce=document.getElementById("cEnd");
+  if(!cs||!ce) return;
+  const r=curRange();
+  let s=r.start; if(s<=0) s=earliestTs();
+  const sd=dayOf(s), ed=dayOf(r.end);
+  cs.value = (cs.min&&sd<cs.min)?cs.min : (cs.max&&sd>cs.max)?cs.max : sd;
+  ce.value = (ce.min&&ed<ce.min)?ce.min : (ce.max&&ed>ce.max)?ce.max : ed;
+}
 // constrain the custom date inputs to the fetched data span, and prefill with earliest/latest day
 function updateCustomBounds(){
   const rs=DATA.records||[]; if(!rs.length) return;
@@ -969,7 +988,7 @@ function buildData(serverRecs, balance, dashboard, rank){
   };
 }
 
-function setData(d){ DATA=d; RECS=d.recs||[]; k=d.kpi; activeAccount="__all__"; activeDays=0; customActive=false; customStart=""; customEnd=""; showTab("overview"); renderAllPages(); }
+function setData(d){ DATA=d; RECS=d.recs||[]; k=d.kpi; activeAccount="__all__"; activeDays=0; customActive=false; customStart=""; customEnd=""; showTab("overview"); renderAllPages(); syncDateInputs(); }
 
 // ---- token persistence ----
 const tokenEl=document.getElementById("tokenInput");
